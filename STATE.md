@@ -21,6 +21,19 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 3. [x] APK debug compile ✅ (app-debug.apk 19 Mo, BUILD SUCCESSFUL 2026-10-10 01:07)
 4. [ ] Phase 4 — scratch basse latence (Oboe) + 8 pads + sync affinés
 5. [ ] Preset mapping MK3 **validé sur hardware réel** (bloquant publication — attendre les codes MIDI de Thibault via l'écran Monitor)
+### 🎚️ Banque de sons + Mode Apprentissage du scratch (demande Thibault 2026-10-10)
+- **Banque de sons intégrée** : samples de scratch classiques (vocal "Ahh"/"Fresh"), breakbeats, FX. Bundlés dans `app/src/main/assets/` (⚠️ licences CC0/royalty-free obligatoires pour le Play Store). Modèle = `audio/SoundBank.kt`.
+- **Mode "jeu" = apprentissage du scratch** (PAS DJ Hero). Trainer rythmique : breakbeat en boucle + métronome + pattern visuel des temps où scratcher, scoring de la précision (timing du jog).
+- **Progression** (modèle = `game/Curriculum.kt`) :
+  - Chapitre 1 — **Baby scratch** sur un breakbeat :
+    - Niv 1 : que des **noires** (1/temps)
+    - Niv 2 : **croches** (2/temps)
+    - Niv 3 : **noires + croches** mélangées
+    - Niv 4 : **doubles croches** (4/temps)
+    - Niv 5 : **tout** (mix libre)
+  - Chapitres suivants : forward, chirp, tear, scribble, transformer, flare, orbit… (1 technique/chapitre, même échelle de 5 niveaux).
+- Dépend du moteur scratch basse latence (Oboe, phase 4) pour le ressenti ; le trainer rythmique peut démarrer en phase 3 (jog = scrub position/pitch).
+
 ### Chantier publication Play Store
 6. [ ] Nom store sans violer la marque Hercules/Inpulse (app = "DJ Kids" ; usage nominatif "compatible Hercules DJControl Inpulse 200 MK3" OK en description, pas dans le titre)
 7. [ ] Icône + feature graphic + captures (DA soignée, pas générique IA)
