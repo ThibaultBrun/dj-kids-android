@@ -1,23 +1,22 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
+        maven {
+            url = uri("https://redirector.gvt1.com/edgedl/android/maven2")
+            isAllowInsecureProtocol = true
         }
-        mavenCentral()
         gradlePluginPortal()
+        mavenCentral()
     }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        maven {
+            url = uri("https://redirector.gvt1.com/edgedl/android/maven2")
+            isAllowInsecureProtocol = true
+        }
         mavenCentral()
     }
 }
-
 rootProject.name = "DJ Kids"
 include(":app")

@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "fr.tbrun.djkids"
     compileSdk = 35
+    buildToolsVersion = "35.0.1"
 
     defaultConfig {
         applicationId = "fr.tbrun.djkids"
