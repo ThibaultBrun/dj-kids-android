@@ -1,0 +1,61 @@
+workflows:
+  android-debug:
+    name: DJ Kids (debug APK)
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      java: 21
+    # Build debug à la demande (manuel / API) pour sideloader sur le tél de Charly.
+    scripts:
+      - name: Build debug APK
+        script: |
+          set -e
+          java -version
+          # Le wrapper Gradle ne retente pas sur un 504 GitHub : on télécharge la distribution
+          # avec curl (retry robuste) puis on lance gradle en direct.
+          GVER=8.11.1
+          if [ ! -x "/tmp/gradle/gradle-$GVER/bin/gradle" ]; then
+            curl -fSL --retry 10 --retry-all-errors --retry-delay 8 \
+              -o /tmp/gradle.zip "https://services.gradle.org/distributions/gradle-$GVER-bin.zip"
+            mkdir -p /tmp/gradle
+            unzip -q -o /tmp/gradle.zip -d /tmp/gradle
+          fi
+          "/tmp/gradle/gradle-$GVER/bin/gradle" assembleDebug --no-daemon --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+
+  android-release:
+    name: DJ Kids (release AAB signé)
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      java: 21
+      groups:
+        # Variables sécurisées Codemagic à créer (groupe "djkids_signing") :
+        #   DJKIDS_KEYSTORE_B64, DJKIDS_KEYSTORE_PASSWORD, DJKIDS_KEY_ALIAS, DJKIDS_KEY_PASSWORD
+        - djkids_signing
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Build signed AAB
+        script: |
+          set -e
+          java -version
+          export DJKIDS_KEYSTORE_PATH="$CM_BUILD_DIR/djkids-upload.p12"
+          echo "$DJKIDS_KEYSTORE_B64" | base64 --decode > "$DJKIDS_KEYSTORE_PATH"
+          export DJKIDS_VERSION_CODE="${BUILD_NUMBER:-1}"
+          export DJKIDS_VERSION_NAME="0.2.${BUILD_NUMBER:-0}"
+          GVER=8.11.1
+          if [ ! -x "/tmp/gradle/gradle-$GVER/bin/gradle" ]; then
+            curl -fSL --retry 10 --retry-all-errors --retry-delay 8 \
+              -o /tmp/gradle.zip "https://services.gradle.org/distributions/gradle-$GVER-bin.zip"
+            mkdir -p /tmp/gradle
+            unzip -q -o /tmp/gradle.zip -d /tmp/gradle
+          fi
+          "/tmp/gradle/gradle-$GVER/bin/gradle" bundleRelease --no-daemon --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.aab

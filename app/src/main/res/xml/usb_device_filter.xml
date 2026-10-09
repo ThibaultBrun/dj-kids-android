@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Hercules DJControl Inpulse 200 MK3 (vendor id Hercules/Guillemot = 0x06F8).
+         On laisse product-id ouvert : la MK3 est détectée via la classe USB-MIDI de toute façon.
+         Ce filtre sert uniquement au lancement auto de l'appli au branchement. -->
+    <usb-device vendor-id="1784" />
+</resources>
