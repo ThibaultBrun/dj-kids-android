@@ -44,6 +44,5 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
-- 2026-10-10 23:45 : TrainerScreen + ScratchEngine + PcmSample + TrainerEngine ajoutés, bug Offset(Double) corrigé. BUILD SUCCESSFUL 25s. Commit 18f6828 pushé sur main.
-- Onglet "Scratch" opérationnel dans l'APK : sélection technique/niveau, autoroute de notes Canvas temps réel, platine tactile drag ↕.
-- Prochaine priorité : assets audio manquants (WAV breakbeat/scratch dans assets/sounds/) et Oboe latence si besoin.
+- 2026-10-10 23:42 : assets audio ajoutés — 8 WAV synthétiques CC0 générés par Python (3 breakbeats 70/85/90 BPM, 3 scratch vocaux Ahh/Fresh/Aah yeah, 2 FX airhorn/rewind). BUILD SUCCESSFUL 12s. Commit 8e74b22 pushé sur main.
+- Prochaine priorité : intégrer ScratchEngine dans TrainerScreen (charger les WAV via PcmSample.fromAsset, démarrer engine, piloter scratchSpeed depuis le drag jog) + tester la boucle breakbeat en arrière-plan pendant le scoring.
