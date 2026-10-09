@@ -57,7 +57,7 @@ fun DjScreen(vm: DjViewModel) {
     val context = LocalContext.current
     var pendingDeck by remember { mutableStateOf<DeckId?>(null) }
 
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument) { uri ->
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val d = pendingDeck
         if (uri != null && d != null) {
             runCatching {
