@@ -26,7 +26,11 @@ class MidiMapping(context: Context) {
     private val prefs = context.getSharedPreferences("midi_mapping", Context.MODE_PRIVATE)
     private val bindings = HashMap<String, Binding>()
 
-    init { load() }
+    init {
+        load()
+        // 1er lancement (aucun mapping sauvegardé) → applique le preset MK3 pour que ça marche direct.
+        if (bindings.isEmpty()) applyInpulse200Preset()
+    }
 
     fun all(): Map<String, Binding> = bindings.toMap()
 
@@ -128,35 +132,36 @@ class MidiMapping(context: Context) {
     }
 
     /**
-     * Preset "devinette Inpulse 200" : hypothèses de départ (canal 1 = platine A, canal 2 = B).
-     * ⚠️ À vérifier avec le MIDI monitor : si un contrôle ne répond pas, utilise le MIDI Learn.
+     * Preset Inpulse 200 MK3 — issu du relevé MIDI réel (2026-10-10, ordre des contrôles connu).
+     * Platine A = canal 2, Platine B = canal 3, crossfader = canal 1, pads = canaux 7 (A) et 8 (B).
+     * Assignations EQ (CC2/4/5 = grave/médium/aigu) à confirmer ; sinon MIDI Learn.
      */
     fun applyInpulse200Preset() {
         bindings.clear()
-        fun deckCh(d: DeckId) = if (d == DeckId.A) 1 else 2
+        // Platine A = canal 2, Platine B = canal 3 ; pads : canal 7 (A), canal 8 (B).
+        fun deckCh(d: DeckId) = if (d == DeckId.A) 2 else 3
+        fun padCh(d: DeckId) = if (d == DeckId.A) 7 else 8
         for (d in DeckId.entries) {
             val ch = deckCh(d)
-            // Boutons transport (notes présumées)
-            learnSilent("N:$ch:0x07".hx(), Binding(ControlFunction.PLAY, d))
-            learnSilent("N:$ch:0x06".hx(), Binding(ControlFunction.CUE, d))
-            learnSilent("N:$ch:0x05".hx(), Binding(ControlFunction.SYNC, d))
-            learnSilent("N:$ch:0x0D".hx(), Binding(ControlFunction.LOAD, d))
-            // Faders / knobs (CC présumés)
-            learnSilent("CC:$ch:0x00".hx(), Binding(ControlFunction.VOLUME, d))
-            learnSilent("CC:$ch:0x08".hx(), Binding(ControlFunction.TEMPO, d))
-            learnSilent("CC:$ch:0x02".hx(), Binding(ControlFunction.EQ_HIGH, d))
-            learnSilent("CC:$ch:0x03".hx(), Binding(ControlFunction.EQ_MID, d))
-            learnSilent("CC:$ch:0x04".hx(), Binding(ControlFunction.EQ_LOW, d))
-            learnSilent("CC:$ch:0x09".hx(), Binding(ControlFunction.FILTER, d))
-            learnSilent("CC:$ch:0x0A".hx(), Binding(ControlFunction.JOG, d))
-            // 8 pads (notes 0x10.. présumées)
+            // Boutons transport (notes relevées : 7=play, 6=cue, 5=sync).
+            learnSilent("N:$ch:7", Binding(ControlFunction.PLAY, d))
+            learnSilent("N:$ch:6", Binding(ControlFunction.CUE, d))
+            learnSilent("N:$ch:5", Binding(ControlFunction.SYNC, d))
+            // Faders / knobs (CC 14 bits, on lit le MSB) : 0=volume, 8=pitch, 2/4/5=EQ grave/médium/aigu, 10=jog.
+            learnSilent("CC:$ch:0", Binding(ControlFunction.VOLUME, d))
+            learnSilent("CC:$ch:8", Binding(ControlFunction.TEMPO, d))
+            learnSilent("CC:$ch:2", Binding(ControlFunction.EQ_LOW, d))
+            learnSilent("CC:$ch:4", Binding(ControlFunction.EQ_MID, d))
+            learnSilent("CC:$ch:5", Binding(ControlFunction.EQ_HIGH, d))
+            learnSilent("CC:$ch:10", Binding(ControlFunction.JOG, d))
+            // Pads (notes 0..7 sur le canal de pads de la platine).
+            val pc = padCh(d)
             for (p in 0 until 8) {
-                learnSilent("N:$ch:${0x10 + p}", Binding(ControlFunction.PAD, d, pad = p))
+                learnSilent("N:$pc:$p", Binding(ControlFunction.PAD, d, pad = p))
             }
         }
-        // Mixer global sur canal 1 (présumé)
-        learnSilent("CC:1:0x01".hx(), Binding(ControlFunction.CROSSFADER, null))
-        learnSilent("CC:1:0x0C".hx(), Binding(ControlFunction.MASTER, null))
+        // Crossfader global = canal 1, CC0 (14 bits).
+        learnSilent("CC:1:0", Binding(ControlFunction.CROSSFADER, null))
         save()
     }
 
