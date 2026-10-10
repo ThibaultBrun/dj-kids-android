@@ -2,6 +2,7 @@ package fr.tbrun.djkids.ui.screens
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -83,16 +86,18 @@ fun DjScreen(vm: DjViewModel) {
     }
 
     Row(modifier = Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 4.dp)) {
-        DeckPanel(vm.engine.deckA, DeckId.A, DeckAColor, { openPicker(DeckId.A) }, Modifier.weight(1f))
+        DeckPanel(vm.engine.deckA, DeckId.A, DeckAColor, { openPicker(DeckId.A) },
+            { s -> vm.loadBundled(DeckId.A, s) }, Modifier.weight(1f))
         MixerColumn(vm, Modifier.width(88.dp))
-        DeckPanel(vm.engine.deckB, DeckId.B, DeckBColor, { openPicker(DeckId.B) }, Modifier.weight(1f))
+        DeckPanel(vm.engine.deckB, DeckId.B, DeckBColor, { openPicker(DeckId.B) },
+            { s -> vm.loadBundled(DeckId.B, s) }, Modifier.weight(1f))
     }
 }
 
 /** Une platine façon appli DJ moderne : jog central dimensionné par la hauteur, faders sur le côté
  *  extérieur, EQ près du centre, transport (cue/play) en bas. Tient sans scroll en paysage. */
 @Composable
-private fun DeckPanel(deck: Deck, deckId: DeckId, color: Color, onLoad: () -> Unit, modifier: Modifier = Modifier) {
+private fun DeckPanel(deck: Deck, deckId: DeckId, color: Color, onLoad: () -> Unit, onLoadBundled: (fr.tbrun.djkids.audio.SoundSample) -> Unit, modifier: Modifier = Modifier) {
     val playing by deck.playing.collectAsStateWithLifecycle()
     val title by deck.title.collectAsStateWithLifecycle()
     val pos by deck.positionMs.collectAsStateWithLifecycle()
@@ -140,14 +145,53 @@ private fun DeckPanel(deck: Deck, deckId: DeckId, color: Color, onLoad: () -> Un
 
         Spacer(Modifier.height(4.dp))
         // Transport en bas.
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        var showBank by remember { mutableStateOf(false) }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             RoundButton("CUE", color, false, onDown = { deck.cuePressed() }, onUp = { deck.cueReleased() }, sizeDp = 46)
             RoundButton(if (playing) "❚❚" else "►", Lime, playing, onDown = { deck.togglePlay() }, sizeDp = 56)
+            OutlinedButton(onClick = { showBank = true }, contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp)) {
+                Text("Sons", fontSize = 12.sp)
+            }
             OutlinedButton(onClick = onLoad, contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp)) {
-                Icon(Icons.Filled.MusicNote, contentDescription = "Charger")
+                Icon(Icons.Filled.MusicNote, contentDescription = "Charger un fichier")
             }
         }
+        if (showBank) {
+            SoundBankDialog(color = color, onPick = { onLoadBundled(it); showBank = false }, onDismiss = { showBank = false })
+        }
     }
+}
+
+/** Banque de sons intégrée : breakbeats (à mettre d'un côté) + samples de scratch (de l'autre) + FX. */
+@Composable
+private fun SoundBankDialog(color: Color, onPick: (fr.tbrun.djkids.audio.SoundSample) -> Unit, onDismiss: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {},
+        dismissButton = { OutlinedButton(onClick = onDismiss) { Text("Fermer") } },
+        title = { Text("Banque de sons", color = color) },
+        text = {
+            androidx.compose.foundation.lazy.LazyColumn {
+                val groups = listOf(
+                    "🥁 Breakbeats" to fr.tbrun.djkids.audio.SoundBank.breakbeats,
+                    "🎚️ Scratch" to fr.tbrun.djkids.audio.SoundBank.scratches,
+                    "📣 FX" to fr.tbrun.djkids.audio.SoundBank.fx,
+                )
+                groups.forEach { (titre, items) ->
+                    item { Text(titre, color = TextLo, fontSize = 12.sp, modifier = Modifier.padding(vertical = 4.dp)) }
+                    items(items) { s ->
+                        Text(
+                            s.name,
+                            fontSize = 15.sp,
+                            modifier = Modifier.fillMaxWidth()
+                                .clickable { onPick(s) }
+                                .padding(vertical = 10.dp),
+                        )
+                    }
+                }
+            }
+        },
+    )
 }
 
 @Composable

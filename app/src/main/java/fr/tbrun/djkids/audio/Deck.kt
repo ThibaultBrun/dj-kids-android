@@ -162,12 +162,29 @@ class Deck(
         player.playbackParameters = PlaybackParameters(rate, rate)
     }
 
-    /** Nudge jog : petite avance/recul temporel (phase 3). Scratch basse latence = phase 4 (Oboe). */
+    private var jogRestoreJob: Job? = null
+
+    /**
+     * Jog en mode DJ : en lecture, on « bend » la vitesse (effet scratch/nudge) sans mettre en pause
+     * ni re-seek en boucle (ce qui coupait le son) ; à l'arrêt, le jog fait une recherche fine.
+     * Le vrai scratch vinyle (lecture arrière, basse latence) viendra via le moteur Oboe.
+     */
     fun jogNudge(delta: Float) {
         if (!_loaded.value) return
-        val target = (player.currentPosition + (delta * 60).toLong())
-            .coerceIn(0L, player.duration.coerceAtLeast(0L))
-        player.seekTo(target)
+        if (player.isPlaying) {
+            val bend = (1f + delta * 1.6f).coerceIn(0.3f, 2.5f)
+            player.playbackParameters = PlaybackParameters(bend, bend)
+            jogRestoreJob?.cancel()
+            jogRestoreJob = scope.launch(Dispatchers.Main) {
+                delay(90)
+                val base = (0.5f + _tempo.value).coerceIn(0.5f, 1.5f)
+                player.playbackParameters = PlaybackParameters(base, base)
+            }
+        } else {
+            val target = (player.currentPosition + (delta * 120).toLong())
+                .coerceIn(0L, player.duration.coerceAtLeast(0L))
+            player.seekTo(target)
+        }
     }
 
     fun setEqLow(v: Float)  { eqLow.value = v;  eq.setLow(v) }

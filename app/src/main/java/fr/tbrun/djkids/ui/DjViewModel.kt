@@ -188,6 +188,11 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     // --- Chargement de morceaux ---
     fun loadTrack(deck: DeckId, uri: Uri, title: String) = engine.loadTrack(deck, uri, title)
 
+    /** Charge un son de la banque intégrée (assets) directement sur une platine. */
+    fun loadBundled(deck: DeckId, sample: fr.tbrun.djkids.audio.SoundSample) {
+        engine.loadTrack(deck, Uri.parse("asset:///${sample.file}"), sample.name)
+    }
+
     // --- Mode apprentissage ---
     private fun ensureSamples() {
         if (scratchSampleLoaded) return
@@ -239,6 +244,7 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
 
     fun trainerStop() {
         trainer.stop()
+        trainer.clearResult()
         jogWatchdog?.cancel()
         jogWatchdog = null
         scratch.setBreakPlaying(false)

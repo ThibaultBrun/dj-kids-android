@@ -64,7 +64,13 @@ class TrainerEngine(private val scope: CoroutineScope) {
     fun load(level: Level, seed: Long = System.currentTimeMillis()) {
         this.level = level
         pattern = PatternGenerator.generate(level, seed = seed)
+        _result.value = null
+        _lastJudgement.value = null
+        _positionBeat.value = -countInBeats.toDouble()
     }
+
+    /** Ferme l'écran de résultat (évite la boucle du dialogue). */
+    fun clearResult() { _result.value = null }
 
     fun currentPattern(): ScratchPattern? = pattern
 
