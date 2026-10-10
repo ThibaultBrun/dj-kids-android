@@ -3,6 +3,8 @@ package fr.tbrun.djkids.ui.screens
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
@@ -79,15 +82,17 @@ fun DjScreen(vm: DjViewModel) {
         vm.engine.loadRequests.collect { openPicker(it) }
     }
 
-    Row(modifier = Modifier.fillMaxSize().padding(6.dp)) {
-        DeckColumn(vm.engine.deckA, DeckAColor, { openPicker(DeckId.A) }, Modifier.weight(1f))
-        MixerColumn(vm, Modifier.width(120.dp))
-        DeckColumn(vm.engine.deckB, DeckBColor, { openPicker(DeckId.B) }, Modifier.weight(1f))
+    Row(modifier = Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 4.dp)) {
+        DeckPanel(vm.engine.deckA, DeckId.A, DeckAColor, { openPicker(DeckId.A) }, Modifier.weight(1f))
+        MixerColumn(vm, Modifier.width(88.dp))
+        DeckPanel(vm.engine.deckB, DeckId.B, DeckBColor, { openPicker(DeckId.B) }, Modifier.weight(1f))
     }
 }
 
+/** Une platine façon appli DJ moderne : jog central dimensionné par la hauteur, faders sur le côté
+ *  extérieur, EQ près du centre, transport (cue/play) en bas. Tient sans scroll en paysage. */
 @Composable
-private fun DeckColumn(deck: Deck, color: Color, onLoad: () -> Unit, modifier: Modifier = Modifier) {
+private fun DeckPanel(deck: Deck, deckId: DeckId, color: Color, onLoad: () -> Unit, modifier: Modifier = Modifier) {
     val playing by deck.playing.collectAsStateWithLifecycle()
     val title by deck.title.collectAsStateWithLifecycle()
     val pos by deck.positionMs.collectAsStateWithLifecycle()
@@ -97,71 +102,51 @@ private fun DeckColumn(deck: Deck, color: Color, onLoad: () -> Unit, modifier: M
     val mid by deck.eqMid.collectAsStateWithLifecycle()
     val high by deck.eqHigh.collectAsStateWithLifecycle()
     val vol by deck.channelVolume.collectAsStateWithLifecycle()
-    val cues by deck.hotCues.collectAsStateWithLifecycle()
     val progress = if (dur > 0) pos.toFloat() / dur else 0f
+    val isA = deckId == DeckId.A
 
-    Column(
-        modifier = modifier.fillMaxHeight().verticalScroll(rememberScrollState()).padding(horizontal = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    Column(modifier = modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+        // Bandeau titre + temps (une ligne, tronqué).
         Text(
-            text = title ?: "Platine ${deck.id} — vide",
-            color = color,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontSize = 13.sp,
-            modifier = Modifier.fillMaxWidth(),
+            text = title ?: "PLATINE $deckId",
+            color = color, fontWeight = FontWeight.Bold, maxLines = 1,
+            overflow = TextOverflow.Ellipsis, fontSize = 12.sp, modifier = Modifier.fillMaxWidth(),
         )
-        Text("${fmt(pos)} / ${fmt(dur)}", color = TextLo, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+        Text("${fmt(pos)} / ${fmt(dur)}", color = TextLo, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+        Spacer(Modifier.height(4.dp))
 
-        // Plateau + EQ + faders sur une seule rangée (compact, tient en paysage).
+        // Zone centrale : jog + faders + EQ, prend toute la hauteur restante.
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth().weight(1f),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Platter(playing, progress, color, modifier = Modifier.size(92.dp))
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Knob(high, deck::setEqHigh, color, "AIGU", size = 38)
-                Knob(mid, deck::setEqMid, color, "MED", size = 38)
-                Knob(low, deck::setEqLow, color, "GRAVE", size = 38)
-            }
-            VerticalFader(tempo, deck::setTempo, color, "TEMPO", heightDp = 104)
-            VerticalFader(vol, deck::setChannelVolume, color, "VOL", heightDp = 104)
-        }
-
-        Spacer(Modifier.height(6.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-            RoundButton("CUE", color, false, onDown = { deck.cuePressed() }, onUp = { deck.cueReleased() }, sizeDp = 52)
-            RoundButton(if (playing) "❚❚" else "►", Lime, playing, onDown = { deck.togglePlay() }, sizeDp = 60)
-        }
-
-        Spacer(Modifier.height(8.dp))
-        // 8 pads (hot cues), 2 rangées de 4.
-        for (row in 0 until 2) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                for (col in 0 until 4) {
-                    val i = row * 4 + col
-                    Pad(
-                        index = i,
-                        active = cues[i] >= 0,
-                        color = color,
-                        onDown = { deck.padPressed(i) },
-                        onUp = { },
-                        modifier = Modifier.weight(1f),
-                    )
+            val eq: @Composable () -> Unit = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Knob(high, deck::setEqHigh, color, "AIGU", size = 34)
+                    Knob(mid, deck::setEqMid, color, "MED", size = 34)
+                    Knob(low, deck::setEqLow, color, "GRAVE", size = 34)
                 }
             }
-            Spacer(Modifier.height(5.dp))
+            val volF: @Composable () -> Unit = { VerticalFader(vol, deck::setChannelVolume, color, "VOL", heightDp = 132) }
+            val tempoF: @Composable () -> Unit = { VerticalFader(tempo, deck::setTempo, color, "PITCH", heightDp = 132) }
+            val platter: @Composable () -> Unit = {
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    Platter(playing, progress, color, modifier = Modifier.fillMaxHeight().aspectRatio(1f))
+                }
+            }
+            if (isA) { volF(); platter(); tempoF(); eq() } else { eq(); tempoF(); platter(); volF() }
         }
 
-        Button(onClick = onLoad, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Filled.MusicNote, contentDescription = null)
-            Spacer(Modifier.width(6.dp))
-            Text("Charger")
+        Spacer(Modifier.height(4.dp))
+        // Transport en bas.
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+            RoundButton("CUE", color, false, onDown = { deck.cuePressed() }, onUp = { deck.cueReleased() }, sizeDp = 46)
+            RoundButton(if (playing) "❚❚" else "►", Lime, playing, onDown = { deck.togglePlay() }, sizeDp = 56)
+            OutlinedButton(onClick = onLoad, contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp)) {
+                Icon(Icons.Filled.MusicNote, contentDescription = "Charger")
+            }
         }
-        Spacer(Modifier.height(8.dp))
     }
 }
 
