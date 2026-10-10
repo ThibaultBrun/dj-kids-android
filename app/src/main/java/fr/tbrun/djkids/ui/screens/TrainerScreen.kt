@@ -90,9 +90,26 @@ fun TrainerScreen(vm: DjViewModel) {
 @Composable
 private fun ChapterPicker(vm: DjViewModel, onPick: (Technique) -> Unit) {
     val soundsAvailable by vm.soundsAvailable.collectAsStateWithLifecycle()
+    val totalLevels = remember { Curriculum.techniques.sumOf { it.levels.size } }
+    val doneLevels = remember(vm) {
+        Curriculum.techniques.sumOf { t ->
+            (vm.unlockedLevel(t.id) - 1).coerceIn(0, t.levels.size)
+        }
+    }
+    val doneTechs = remember(vm) { Curriculum.techniques.count { t -> vm.unlockedLevel(t.id) > t.levels.size } }
     Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Apprendre le scratch", style = MaterialTheme.typography.titleLarge, color = Lime)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Text("Apprendre le scratch", style = MaterialTheme.typography.titleLarge, color = Lime)
+            Text("$doneLevels/$totalLevels niv · $doneTechs/${Curriculum.techniques.size} tech", color = TextLo, fontSize = 11.sp)
+        }
         Text("Choisis une technique", color = TextLo, fontSize = 13.sp)
+        Spacer(Modifier.height(4.dp))
+        androidx.compose.material3.LinearProgressIndicator(
+            progress = { doneLevels.toFloat() / totalLevels.coerceAtLeast(1) },
+            modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)),
+            color = Lime,
+            trackColor = Surface2,
+        )
         Spacer(Modifier.height(8.dp))
         if (!soundsAvailable) {
             Row(
@@ -351,6 +368,7 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
     result?.let { r ->
         ResultDialog(
             accuracy = r.accuracy, passed = r.passed, maxCombo = r.maxCombo,
+            passAccuracy = lvl.passAccuracy,
             hasNext = lvl.index < tech.levels.size,
             onReplay = { vm.trainerSelect(tech, lvl); vm.trainerStart() },
             onNext = onNext,
@@ -495,17 +513,31 @@ private fun ScratchPad(enabled: Boolean, onScrub: (Double) -> Unit, onStroke: ()
 
 @Composable
 private fun ResultDialog(
-    accuracy: Float, passed: Boolean, maxCombo: Int, hasNext: Boolean,
+    accuracy: Float, passed: Boolean, maxCombo: Int, passAccuracy: Float, hasNext: Boolean,
     onReplay: () -> Unit, onNext: () -> Unit, onQuit: () -> Unit,
 ) {
+    val stars = when {
+        accuracy >= 0.95f -> 3
+        accuracy >= 0.85f -> 2
+        accuracy >= passAccuracy -> 1
+        else -> 0
+    }
+    val starsLabel = "⭐".repeat(stars) + "☆".repeat(3 - stars)
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onQuit,
         title = { Text(if (passed) "🎉 Réussi !" else "Presque !", color = if (passed) Lime else Amber) },
         text = {
-            Column {
-                Text("Précision : ${(accuracy * 100).toInt()} %")
-                Text("Meilleur combo : x$maxCombo")
-                if (!passed) Text("Il faut un peu plus de précision pour débloquer la suite.", color = TextLo, fontSize = 12.sp)
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(starsLabel, fontSize = 24.sp)
+                Text("Précision : ${(accuracy * 100).toInt()} %", fontWeight = FontWeight.Bold)
+                Text("Meilleur combo : x$maxCombo", color = TextLo, fontSize = 13.sp)
+                if (!passed) {
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        "Objectif : ${(passAccuracy * 100).toInt()} % — encore un peu !",
+                        color = Amber, fontSize = 12.sp,
+                    )
+                }
             }
         },
         confirmButton = {
