@@ -5,8 +5,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import fr.tbrun.djkids.audio.AudioDecoder
 import fr.tbrun.djkids.audio.DjEngine
-import fr.tbrun.djkids.audio.PcmSample
 import fr.tbrun.djkids.audio.ScratchEngine
 import fr.tbrun.djkids.audio.SoundBank
 import fr.tbrun.djkids.game.Curriculum
@@ -20,11 +20,13 @@ import fr.tbrun.djkids.midi.MidiEngine
 import fr.tbrun.djkids.midi.MidiMapping
 import fr.tbrun.djkids.midi.MidiMessage
 import fr.tbrun.djkids.model.DeckId
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Cible de MIDI learn : la fonction qu'on veut associer au prochain contrôle pressé. */
 data class LearnTarget(val fn: ControlFunction, val deck: DeckId?, val pad: Int = -1)
@@ -196,13 +198,18 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     // --- Mode apprentissage ---
     private fun ensureSamples() {
         if (scratchSampleLoaded) return
-        val ctx = getApplication<Application>()
-        val scratchSample = PcmSample.fromAsset(ctx, SoundBank.defaultScratch.file)
-        val breakSample = PcmSample.fromAsset(ctx, SoundBank.defaultBreak.file)
-        scratch.setScratchSample(scratchSample)
-        scratch.setBreak(breakSample)
         scratchSampleLoaded = true
-        _soundsAvailable.value = scratchSample != null || breakSample != null
+        val ctx = getApplication<Application>()
+        viewModelScope.launch(Dispatchers.IO) {
+            val scr = AudioDecoder.decode(ctx, Uri.parse("asset:///${SoundBank.defaultScratch.file}"))
+            // On ne décode que ~20 s du break pour le trainer (il boucle).
+            val brk = AudioDecoder.decode(ctx, Uri.parse("asset:///${SoundBank.defaultBreak.file}"), maxSeconds = 20)
+            withContext(Dispatchers.Main) {
+                scratch.setScratchSample(scr)
+                scratch.setBreak(brk)
+                _soundsAvailable.value = scr != null || brk != null
+            }
+        }
     }
 
     /** Niveau débloqué le plus haut pour une technique (1 par défaut). */

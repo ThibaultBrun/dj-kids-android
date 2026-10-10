@@ -1,91 +1,112 @@
 [
   {
     "cat": "scratch",
-    "file": "sounds/scratch/scratch1.wav",
-    "id": 454731,
-    "name": "SCRATCH_TRANSFORM_006.aif",
+    "file": "sounds/scratch/scratch1.mp3",
+    "id": 341488,
+    "name": "Woo Hoo",
     "bpm": null
   },
   {
     "cat": "scratch",
-    "file": "sounds/scratch/scratch2.wav",
-    "id": 454730,
-    "name": "SCRATCH_TRANSFORM_007.aif",
+    "file": "sounds/scratch/scratch2.mp3",
+    "id": 572603,
+    "name": "VOXWoo01.wav",
     "bpm": null
   },
   {
     "cat": "scratch",
-    "file": "sounds/scratch/scratch3.wav",
-    "id": 454723,
-    "name": "SCRATCH_BACK_DRAG_002.aif",
+    "file": "sounds/scratch/scratch3.mp3",
+    "id": 712756,
+    "name": "vox_WOO",
     "bpm": null
   },
   {
     "cat": "scratch",
-    "file": "sounds/scratch/scratch4.wav",
-    "id": 454720,
-    "name": "SCRATCH_TRANSFORM_001.aif",
+    "file": "sounds/scratch/scratch4.mp3",
+    "id": 784431,
+    "name": "8-bit Rap Vocal - Yeah!",
     "bpm": null
   },
   {
     "cat": "scratch",
-    "file": "sounds/scratch/scratch5.wav",
-    "id": 454716,
-    "name": "SCRATCH_BACK_DRAG_001.aif",
+    "file": "sounds/scratch/scratch5.mp3",
+    "id": 345083,
+    "name": "HEY VERY LOW 4.WAV",
     "bpm": null
   },
   {
     "cat": "scratch",
-    "file": "sounds/scratch/scratch6.wav",
-    "id": 751097,
-    "name": "fast_rumbling_scratch_2",
+    "file": "sounds/scratch/scratch6.mp3",
+    "id": 527740,
+    "name": "Hey - Men Shouting together - Jewish Wedding",
+    "bpm": null
+  },
+  {
+    "cat": "scratch",
+    "file": "sounds/scratch/scratch7.mp3",
+    "id": 639858,
+    "name": "Female Voc txt Hey.wav",
+    "bpm": null
+  },
+  {
+    "cat": "scratch",
+    "file": "sounds/scratch/scratch8.mp3",
+    "id": 639864,
+    "name": "Female Voc txt_ Hey 2.wav",
     "bpm": null
   },
   {
     "cat": "breakbeat",
-    "file": "sounds/breakbeat/break1.wav",
-    "id": 51247,
-    "name": "Silly Drum Break 1.wav",
+    "file": "sounds/breakbeat/break1.mp3",
+    "id": 595489,
+    "name": "Soulja Unit - Liberian Girl (2018)",
     "bpm": null
   },
   {
     "cat": "breakbeat",
-    "file": "sounds/breakbeat/break2.wav",
-    "id": 51248,
-    "name": "silly drum break 2.wav",
+    "file": "sounds/breakbeat/break2.mp3",
+    "id": 595488,
+    "name": "Soulja Unit - The Reminder (2019)",
     "bpm": null
   },
   {
     "cat": "breakbeat",
-    "file": "sounds/breakbeat/break3.wav",
-    "id": 629051,
-    "name": "Crunchy Drum Break 1 [164bpm]",
-    "bpm": 164
+    "file": "sounds/breakbeat/break3.mp3",
+    "id": 623180,
+    "name": "Soulja Unit - Struggling (2012)",
+    "bpm": null
   },
   {
     "cat": "breakbeat",
-    "file": "sounds/breakbeat/break4.wav",
-    "id": 540735,
-    "name": "driver break",
+    "file": "sounds/breakbeat/break4.mp3",
+    "id": 758189,
+    "name": "Soulja Unit - Love Motion (Part 1) (2008)",
+    "bpm": null
+  },
+  {
+    "cat": "breakbeat",
+    "file": "sounds/breakbeat/break5.mp3",
+    "id": 625294,
+    "name": "Soulja Unit - Is It Ur Time (2009)",
     "bpm": null
   },
   {
     "cat": "fx",
-    "file": "sounds/fx/fx1.wav",
+    "file": "sounds/fx/fx1.mp3",
     "id": 131930,
     "name": "Industrial Air Horn",
     "bpm": null
   },
   {
     "cat": "fx",
-    "file": "sounds/fx/fx2.wav",
+    "file": "sounds/fx/fx2.mp3",
     "id": 774253,
     "name": "horn_bike",
     "bpm": null
   },
   {
     "cat": "fx",
-    "file": "sounds/fx/fx3.wav",
+    "file": "sounds/fx/fx3.mp3",
     "id": 414208,
     "name": "Airhorn",
     "bpm": null

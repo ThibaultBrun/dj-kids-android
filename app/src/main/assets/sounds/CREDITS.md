@@ -4,16 +4,19 @@ Tous les fichiers ci-dessous sont **CC0** (domaine public, Freesound). Attributi
 
 | Fichier | Son | Auteur | Licence | Source |
 |---|---|---|---|---|
-| scratch1.wav | SCRATCH_TRANSFORM_006.aif | G_M_D_THREE | CC0 | https://freesound.org/people/G_M_D_THREE/sounds/454731/ |
-| scratch2.wav | SCRATCH_TRANSFORM_007.aif | G_M_D_THREE | CC0 | https://freesound.org/people/G_M_D_THREE/sounds/454730/ |
-| scratch3.wav | SCRATCH_BACK_DRAG_002.aif | G_M_D_THREE | CC0 | https://freesound.org/people/G_M_D_THREE/sounds/454723/ |
-| scratch4.wav | SCRATCH_TRANSFORM_001.aif | G_M_D_THREE | CC0 | https://freesound.org/people/G_M_D_THREE/sounds/454720/ |
-| scratch5.wav | SCRATCH_BACK_DRAG_001.aif | G_M_D_THREE | CC0 | https://freesound.org/people/G_M_D_THREE/sounds/454716/ |
-| scratch6.wav | fast_rumbling_scratch_2 | PuzzleAndy | CC0 | https://freesound.org/people/PuzzleAndy/sounds/751097/ |
-| break1.wav | Silly Drum Break 1.wav | RutgerMuller | CC0 | https://freesound.org/people/RutgerMuller/sounds/51247/ |
-| break2.wav | silly drum break 2.wav | RutgerMuller | CC0 | https://freesound.org/people/RutgerMuller/sounds/51248/ |
-| break3.wav | Crunchy Drum Break 1 [164bpm] | deadrobotmusic | CC0 | https://freesound.org/people/deadrobotmusic/sounds/629051/ |
-| break4.wav | driver break | vekoN | CC0 | https://freesound.org/people/vekoN/sounds/540735/ |
-| fx1.wav | Industrial Air Horn | mcpable | CC0 | https://freesound.org/people/mcpable/sounds/131930/ |
-| fx2.wav | horn_bike | loganzsound | CC0 | https://freesound.org/people/loganzsound/sounds/774253/ |
-| fx3.wav | Airhorn | jacksonacademyashmore | CC0 | https://freesound.org/people/jacksonacademyashmore/sounds/414208/ |
+| scratch1.mp3 | Woo Hoo | Rocotilos | CC0 | https://freesound.org/people/Rocotilos/sounds/341488/ |
+| scratch2.mp3 | VOXWoo01.wav | melisandepope | CC0 | https://freesound.org/people/melisandepope/sounds/572603/ |
+| scratch3.mp3 | vox_WOO | e.noodle | CC0 | https://freesound.org/people/e.noodle/sounds/712756/ |
+| scratch4.mp3 | 8-bit Rap Vocal - Yeah! | MoldyMelodies | CC0 | https://freesound.org/people/MoldyMelodies/sounds/784431/ |
+| scratch5.mp3 | HEY VERY LOW 4.WAV | metrostock99 | CC0 | https://freesound.org/people/metrostock99/sounds/345083/ |
+| scratch6.mp3 | Hey - Men Shouting together - Jewish Wed | khenshom | CC0 | https://freesound.org/people/khenshom/sounds/527740/ |
+| scratch7.mp3 | Female Voc txt Hey.wav | owstu | CC0 | https://freesound.org/people/owstu/sounds/639858/ |
+| scratch8.mp3 | Female Voc txt_ Hey 2.wav | owstu | CC0 | https://freesound.org/people/owstu/sounds/639864/ |
+| break1.mp3 | Soulja Unit - Liberian Girl (2018) | SouljaUnit | CC0 | https://freesound.org/people/SouljaUnit/sounds/595489/ |
+| break2.mp3 | Soulja Unit - The Reminder (2019) | SouljaUnit | CC0 | https://freesound.org/people/SouljaUnit/sounds/595488/ |
+| break3.mp3 | Soulja Unit - Struggling (2012) | SouljaUnit | CC0 | https://freesound.org/people/SouljaUnit/sounds/623180/ |
+| break4.mp3 | Soulja Unit - Love Motion (Part 1) (2008 | SouljaUnit | CC0 | https://freesound.org/people/SouljaUnit/sounds/758189/ |
+| break5.mp3 | Soulja Unit - Is It Ur Time (2009) | SouljaUnit | CC0 | https://freesound.org/people/SouljaUnit/sounds/625294/ |
+| fx1.mp3 | Industrial Air Horn | mcpable | CC0 | https://freesound.org/people/mcpable/sounds/131930/ |
+| fx2.mp3 | horn_bike | loganzsound | CC0 | https://freesound.org/people/loganzsound/sounds/774253/ |
+| fx3.mp3 | Airhorn | jacksonacademyashmore | CC0 | https://freesound.org/people/jacksonacademyashmore/sounds/414208/ |

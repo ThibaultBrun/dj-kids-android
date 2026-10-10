@@ -26,27 +26,32 @@ data class SoundSample(
 
 object SoundBank {
 
-    // Vrais samples CC0 (Freesound). Détail licences/auteurs : assets/sounds/CREDITS.md.
+    // Vrais sons CC0 (Freesound). Détail licences/auteurs : assets/sounds/CREDITS.md.
+    // Breakbeats = instrus hip-hop de plusieurs minutes (pour scratcher/mixer par-dessus).
     val breakbeats: List<SoundSample> = listOf(
-        SoundSample("break_driver", "Driver break", SoundCategory.BREAKBEAT, "sounds/breakbeat/break4.wav", loop = true, credit = "CC0 vekoN"),
-        SoundSample("break_silly1", "Silly break 1", SoundCategory.BREAKBEAT, "sounds/breakbeat/break1.wav", loop = true, credit = "CC0 RutgerMuller"),
-        SoundSample("break_silly2", "Silly break 2", SoundCategory.BREAKBEAT, "sounds/breakbeat/break2.wav", loop = true, credit = "CC0 RutgerMuller"),
-        SoundSample("break_crunchy", "Crunchy break", SoundCategory.BREAKBEAT, "sounds/breakbeat/break3.wav", bpm = 164, loop = true, credit = "CC0 deadrobotmusic"),
+        SoundSample("bb_liberian", "Liberian Girl", SoundCategory.BREAKBEAT, "sounds/breakbeat/break1.mp3", credit = "CC0 Soulja Unit"),
+        SoundSample("bb_reminder", "The Reminder", SoundCategory.BREAKBEAT, "sounds/breakbeat/break2.mp3", credit = "CC0 Soulja Unit"),
+        SoundSample("bb_struggling", "Struggling", SoundCategory.BREAKBEAT, "sounds/breakbeat/break3.mp3", credit = "CC0 Soulja Unit"),
+        SoundSample("bb_lovemotion", "Love Motion", SoundCategory.BREAKBEAT, "sounds/breakbeat/break4.mp3", credit = "CC0 Soulja Unit"),
+        SoundSample("bb_urtime", "Is It Ur Time", SoundCategory.BREAKBEAT, "sounds/breakbeat/break5.mp3", credit = "CC0 Soulja Unit"),
     )
 
+    // Scratch = VOIX BRUTES (one-shots) à scratcher soi-même avec le jog.
     val scratches: List<SoundSample> = listOf(
-        SoundSample("scr_transform1", "Transform 1", SoundCategory.SCRATCH, "sounds/scratch/scratch1.wav", credit = "CC0 G_M_D_THREE"),
-        SoundSample("scr_transform2", "Transform 2", SoundCategory.SCRATCH, "sounds/scratch/scratch2.wav", credit = "CC0 G_M_D_THREE"),
-        SoundSample("scr_backdrag1", "Back drag 1", SoundCategory.SCRATCH, "sounds/scratch/scratch3.wav", credit = "CC0 G_M_D_THREE"),
-        SoundSample("scr_transform3", "Transform 3", SoundCategory.SCRATCH, "sounds/scratch/scratch4.wav", credit = "CC0 G_M_D_THREE"),
-        SoundSample("scr_backdrag2", "Back drag 2", SoundCategory.SCRATCH, "sounds/scratch/scratch5.wav", credit = "CC0 G_M_D_THREE"),
-        SoundSample("scr_rumble", "Rumble", SoundCategory.SCRATCH, "sounds/scratch/scratch6.wav", credit = "CC0 PuzzleAndy"),
+        SoundSample("scr_woohoo", "Woo Hoo", SoundCategory.SCRATCH, "sounds/scratch/scratch1.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_woo", "Woo", SoundCategory.SCRATCH, "sounds/scratch/scratch2.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_woo2", "Woo 2", SoundCategory.SCRATCH, "sounds/scratch/scratch3.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_yeah", "Yeah !", SoundCategory.SCRATCH, "sounds/scratch/scratch4.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_hey", "Hey", SoundCategory.SCRATCH, "sounds/scratch/scratch5.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_hey_grp", "Hey (groupe)", SoundCategory.SCRATCH, "sounds/scratch/scratch6.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_hey_f", "Hey (voix f.)", SoundCategory.SCRATCH, "sounds/scratch/scratch7.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_hey_f2", "Hey 2", SoundCategory.SCRATCH, "sounds/scratch/scratch8.mp3", credit = "CC0 Freesound"),
     )
 
     val fx: List<SoundSample> = listOf(
-        SoundSample("fx_airhorn", "Air horn", SoundCategory.FX, "sounds/fx/fx1.wav", credit = "CC0 mcpable"),
-        SoundSample("fx_horn_bike", "Klaxon", SoundCategory.FX, "sounds/fx/fx2.wav", credit = "CC0 loganzsound"),
-        SoundSample("fx_airhorn2", "Air horn 2", SoundCategory.FX, "sounds/fx/fx3.wav", credit = "CC0 jacksonacademyashmore"),
+        SoundSample("fx_airhorn", "Air horn", SoundCategory.FX, "sounds/fx/fx1.mp3", credit = "CC0 mcpable"),
+        SoundSample("fx_horn_bike", "Klaxon", SoundCategory.FX, "sounds/fx/fx2.mp3", credit = "CC0 loganzsound"),
+        SoundSample("fx_airhorn2", "Air horn 2", SoundCategory.FX, "sounds/fx/fx3.mp3", credit = "CC0 jacksonacademyashmore"),
     )
 
     val all: List<SoundSample> get() = breakbeats + scratches + fx

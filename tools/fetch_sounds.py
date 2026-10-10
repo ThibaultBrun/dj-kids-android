@@ -17,20 +17,25 @@ assert TOKEN, "FREESOUND_TOKEN manquant dans ~/.freesound.env"
 
 API = "https://freesound.org/apiv2"
 
-# (catégorie, dossier, [requêtes], filtre durée, nb à garder, préfixe fichier)
+# (catégorie, dossier, [requêtes], filtre durée, nb à garder, préfixe fichier, tri)
+# scratch = VOIX BRUTES à scratcher soi-même (pas déjà scratchées) ; breakbeat = longs (minutes).
 PLAN = [
-    ("scratch", "scratch", ["scratch", "turntable scratch", "vinyl scratch"], "0.3 TO 3.0", 6, "scratch"),
-    ("breakbeat", "breakbeat", ["drum break", "breakbeat", "funky drummer break", "boom bap drum loop"], "1.0 TO 12.0", 4, "break"),
-    ("fx", "fx", ["air horn", "rewind vinyl", "dj horn"], "0.3 TO 4.0", 3, "fx"),
+    ("scratch", "scratch",
+     ["woo vocal", "yeah vocal shout", "hey vocal", "ahh vocal", "vocal stab", "ho vocal shout", "come on vocal", "uh vocal"],
+     "0.2 TO 2.5", 8, "scratch", "score"),
+    ("breakbeat", "breakbeat",
+     ["hip hop instrumental beat", "boom bap instrumental", "funky drummer", "old school hip hop beat", "funk breakbeat"],
+     "40 TO 600", 5, "break", "duration_desc"),
+    ("fx", "fx", ["air horn", "rewind vinyl", "siren"], "0.3 TO 5.0", 3, "fx", "score"),
 ]
 
-def search(query, dur):
+def search(query, dur, sort="score"):
     params = urllib.parse.urlencode({
         "query": query,
         "filter": f'license:"Creative Commons 0" duration:[{dur}]',
         "fields": "id,name,license,username,duration,previews,url",
         "page_size": 15,
-        "sort": "score",
+        "sort": sort,
         "token": TOKEN,
     })
     with urllib.request.urlopen(f"{API}/search/text/?{params}", timeout=30) as r:
@@ -51,13 +56,16 @@ def main():
                "| Fichier | Son | Auteur | Licence | Source |", "|---|---|---|---|---|"]
     manifest = []
     seen = set()
-    for cat, folder, queries, dur, keep, prefix in PLAN:
+    for cat, folder, queries, dur, keep, prefix, sort in PLAN:
         (ASSETS / folder).mkdir(parents=True, exist_ok=True)
+        # nettoie l'ancien lot de la catégorie
+        for old in (ASSETS / folder).glob("*.wav"):
+            old.unlink()
         picked = []
         for q in queries:
             if len(picked) >= keep:
                 break
-            for res in search(q, dur):
+            for res in search(q, dur, sort):
                 if len(picked) >= keep:
                     break
                 if res["id"] in seen:
@@ -71,14 +79,10 @@ def main():
                 seen.add(res["id"])
                 picked.append((res, src))
         for i, (res, src) in enumerate(picked, 1):
-            fname = f"{prefix}{i}.wav"
-            mp3 = ASSETS / folder / f".{prefix}{i}.mp3"
-            wav = ASSETS / folder / fname
+            fname = f"{prefix}{i}.mp3"
+            dst = ASSETS / folder / fname
             try:
-                dl(src, mp3)
-                subprocess.run(["ffmpeg", "-y", "-i", str(mp3), "-ac", "1", "-ar", "44100",
-                                str(wav)], check=True, capture_output=True)
-                mp3.unlink(missing_ok=True)
+                dl(src, dst)  # on garde le mp3 (léger) ; le décodeur de l'app lit le mp3
             except Exception as e:
                 print(f"skip {res['id']}: {e}")
                 continue
