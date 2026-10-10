@@ -15,7 +15,7 @@ android {
         targetSdk = 35
         // Surchargés par Codemagic (BUILD_NUMBER) pour les builds signés.
         versionCode = (System.getenv("DJKIDS_VERSION_CODE") ?: "1").toInt()
-        versionName = System.getenv("DJKIDS_VERSION_NAME") ?: "1.2.0"
+        versionName = System.getenv("DJKIDS_VERSION_NAME") ?: "1.3.0"
     }
 
     signingConfigs {

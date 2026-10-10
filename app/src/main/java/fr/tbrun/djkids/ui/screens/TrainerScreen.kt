@@ -450,9 +450,9 @@ private fun ScratchPad(enabled: Boolean, onScrub: (Double) -> Unit, onStroke: ()
                 onDragCancel = { onScrub(0.0); currentSpeed = 0f; lastSign = 0 },
             ) { change, drag ->
                 change.consume()
-                val speed = drag.x.toDouble() * 0.18
+                val speed = drag.x.toDouble() * 0.45
                 onScrub(speed)
-                currentSpeed = (drag.x * 0.18f).coerceIn(-8f, 8f)
+                currentSpeed = (drag.x * 0.45f).coerceIn(-20f, 20f)
                 val sign = if (drag.x > 1f) 1 else if (drag.x < -1f) -1 else 0
                 if (sign != 0 && lastSign != 0 && sign != lastSign) onStroke()
                 if (sign != 0) lastSign = sign

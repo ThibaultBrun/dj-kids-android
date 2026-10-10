@@ -137,7 +137,9 @@ private fun DeckPanel(deck: Deck, deckId: DeckId, color: Color, onLoad: () -> Un
             val tempoF: @Composable () -> Unit = { VerticalFader(tempo, deck::setTempo, color, "PITCH", heightDp = 132) }
             val platter: @Composable () -> Unit = {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    Platter(playing, progress, color, modifier = Modifier.fillMaxHeight().aspectRatio(1f))
+                    Platter(playing, progress, color,
+                        spinDegrees = (pos / 1000f * 180f) % 360f,
+                        modifier = Modifier.fillMaxHeight().aspectRatio(1f))
                 }
             }
             if (isA) { volF(); platter(); tempoF(); eq() } else { eq(); tempoF(); platter(); volF() }

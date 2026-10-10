@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 data class LearnTarget(val fn: ControlFunction, val deck: DeckId?, val pad: Int = -1)
 
 /** Gain appliqué au delta du jog MK3 pour obtenir une vitesse de scratch au ressenti naturel. */
-private const val SCRATCH_JOG_GAIN = 16.0
+private const val SCRATCH_JOG_GAIN = 40.0
 
 /** Stat d'un contrôle MIDI distinct, pour relever le mapping (dédup, résiste au spam du jog). */
 data class ControlStat(

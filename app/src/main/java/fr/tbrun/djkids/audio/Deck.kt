@@ -108,7 +108,7 @@ class Deck(
     /** Jog = vrai scratch : vitesse signée (arrière possible), sans pause. Gain élevé = scratch net. */
     fun jogNudge(delta: Float) {
         if (!_loaded.value) return
-        engine.jog(delta.toDouble() * 10.0, holdMs = 80)
+        engine.jog(delta.toDouble() * 26.0, holdMs = 90)
     }
 
     fun setEqLow(v: Float)  { eqLow.value = v;  engine.setEqLow(v) }

@@ -31,24 +31,19 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.cos
 import kotlin.math.sin
 
-/** Platine vinyle animée : tourne quand ça joue, aiguille proportionnelle à la position. */
+/**
+ * Platine vinyle : le repère blanc tourne selon [spinDegrees] (dérivé de la position de lecture),
+ * donc il suit le scratch (avant/arrière) et la lecture normale.
+ */
 @Composable
 fun Platter(
     playing: Boolean,
     progress: Float,
     color: Color,
+    spinDegrees: Float = 0f,
     modifier: Modifier = Modifier,
 ) {
-    val transition = rememberInfiniteTransition(label = "platter")
-    val angle by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1600, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "spin",
-    )
+    val angle = spinDegrees
     Box(modifier = modifier.aspectRatio(1f), contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             val r = size.minDimension / 2
@@ -63,7 +58,7 @@ fun Platter(
             }
             // Pastille centrale + repère tournant
             drawCircle(color = color, radius = r * 0.16f, center = c)
-            val a = Math.toRadians((if (playing) angle else progress * 360f).toDouble())
+            val a = Math.toRadians(angle.toDouble())
             val mark = Offset(c.x + (r * 0.75f) * cos(a).toFloat(), c.y + (r * 0.75f) * sin(a).toFloat())
             drawCircle(color = Color.White, radius = r * 0.06f, center = mark)
             // Arc de progression

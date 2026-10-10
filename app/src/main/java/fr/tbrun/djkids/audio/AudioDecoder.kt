@@ -38,7 +38,13 @@ object AudioDecoder {
         codec.configure(format, null, null, 0)
         codec.start()
 
-        val out = ArrayList<Float>(srcRate * 8)
+        // Buffer primitif qui double sa capacité (pas de boxing → tient un morceau de plusieurs minutes).
+        var out = FloatArray(srcRate * 16)
+        var outLen = 0
+        fun push(v: Float) {
+            if (outLen >= out.size) out = out.copyOf(out.size * 2)
+            out[outLen++] = v
+        }
         val maxSamples = srcRate.toLong() * maxSeconds
         val info = MediaCodec.BufferInfo()
         var sawInputEOS = false
@@ -69,19 +75,18 @@ object AudioDecoder {
                 while (i < n) {
                     var acc = 0f
                     for (c in 0 until channels) { if (i < n) { acc += shorts.get(i) / 32768f; i++ } }
-                    out.add(acc / channels)
-                    if (out.size >= maxSamples) break
+                    push(acc / channels)
+                    if (outLen >= maxSamples) break
                 }
                 codec.releaseOutputBuffer(outIdx, false)
-                if (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0 || out.size >= maxSamples) sawOutputEOS = true
+                if (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0 || outLen >= maxSamples) sawOutputEOS = true
             } else if (outIdx == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 // Le format de sortie peut préciser un sample rate différent ; on garde srcRate (suffisant ici).
             }
         }
         codec.stop(); codec.release(); extractor.release()
 
-        val arr = FloatArray(out.size) { out[it] }
-        PcmSample(arr, srcRate)
+        if (outLen == 0) null else PcmSample(out.copyOf(outLen), srcRate)
     }.getOrNull()
 
     private fun setSource(context: Context, extractor: MediaExtractor, uri: Uri) {
