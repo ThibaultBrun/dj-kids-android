@@ -44,6 +44,10 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-10 16:02 : Build Gradle actif à la reprise. BUILD SUCCESSFUL (bundleRelease 16s). Aucun changement — chantier Play Store bloqué sur action manuelle Thibault.
+- 2026-10-10 15:22 : Build Gradle actif à la reprise. Aucun changement — chantier Play Store bloqué sur action manuelle Thibault. Rien de neuf à coder.
+- 2026-10-10 14:42 : Build Gradle actif à la reprise. Aucun changement — chantier Play Store bloqué sur action manuelle Thibault. Rien de neuf à coder.
+- 2026-10-10 14:22 : BUILD SUCCESSFUL 24s. Gradle actif à la reprise (build détaché précédent). Aucun changement de code — chantier Play Store toujours bloqué sur action manuelle Thibault. Attente déblocage.
 - 2026-10-10 13:22 : BUILD SUCCESSFUL 24s. Gradle actif à la reprise (build détaché précédent). Aucun changement de code — chantier Play Store toujours bloqué sur action manuelle Thibault. Attente déblocage.
 - 2026-10-10 12:22 : BUILD SUCCESSFUL 24s. Gradle actif à la reprise (build détaché précédent). Aucun changement de code — chantier Play Store toujours bloqué sur action manuelle Thibault. Attente déblocage.
 - 2026-10-10 10:22 : BUILD SUCCESSFUL 24s. Rien de neuf à coder — tout le chantier Play Store est bloqué sur action manuelle Thibault (Play Console + screenshots device). Code stable, 8 langues store prêtes, icône + feature graphic OK. Attente déblocage.

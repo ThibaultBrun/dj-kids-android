@@ -115,26 +115,26 @@ private fun DeckColumn(deck: Deck, color: Color, onLoad: () -> Unit, modifier: M
         )
         Text("${fmt(pos)} / ${fmt(dur)}", color = TextLo, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Platter(playing, progress, color, modifier = Modifier.size(110.dp))
-            Spacer(Modifier.width(6.dp))
+        // Plateau + EQ + faders sur une seule rangée (compact, tient en paysage).
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Platter(playing, progress, color, modifier = Modifier.size(92.dp))
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Knob(high, deck::setEqHigh, color, "AIGU", size = 42)
-                Knob(mid, deck::setEqMid, color, "MED", size = 42)
-                Knob(low, deck::setEqLow, color, "GRAVE", size = 42)
+                Knob(high, deck::setEqHigh, color, "AIGU", size = 38)
+                Knob(mid, deck::setEqMid, color, "MED", size = 38)
+                Knob(low, deck::setEqLow, color, "GRAVE", size = 38)
             }
+            VerticalFader(tempo, deck::setTempo, color, "TEMPO", heightDp = 104)
+            VerticalFader(vol, deck::setChannelVolume, color, "VOL", heightDp = 104)
         }
 
         Spacer(Modifier.height(6.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-            RoundButton("CUE", color, false, onDown = { deck.cuePressed() }, onUp = { deck.cueReleased() }, sizeDp = 56)
-            RoundButton(if (playing) "❚❚" else "►", Lime, playing, onDown = { deck.togglePlay() }, sizeDp = 64)
-        }
-
-        Spacer(Modifier.height(6.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            VerticalFader(tempo, deck::setTempo, color, "TEMPO", heightDp = 120)
-            VerticalFader(vol, deck::setChannelVolume, color, "VOL", heightDp = 120)
+            RoundButton("CUE", color, false, onDown = { deck.cuePressed() }, onUp = { deck.cueReleased() }, sizeDp = 52)
+            RoundButton(if (playing) "❚❚" else "►", Lime, playing, onDown = { deck.togglePlay() }, sizeDp = 60)
         }
 
         Spacer(Modifier.height(8.dp))

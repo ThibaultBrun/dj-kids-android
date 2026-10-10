@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -338,14 +339,20 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
             color = TextLo, fontSize = 11.sp,
             modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
         )
-        // Platine à scratcher : jog MK3 (via MIDI) ou tactile (vinyle animé)
-        ScratchPad(
-            enabled = running,
-            onScrub = { vm.scratchScrub(it) },
-            onStroke = { vm.scratchStroke() },
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f).padding(8.dp),
-        )
+        // Platine à scratcher : prend l'espace restant, dimensionnée par la hauteur (OK paysage + portrait).
+        Box(
+            Modifier.fillMaxWidth().weight(1f, fill = true),
+            contentAlignment = Alignment.Center,
+        ) {
+            ScratchPad(
+                enabled = running,
+                onScrub = { vm.scratchScrub(it) },
+                onStroke = { vm.scratchStroke() },
+                modifier = Modifier.fillMaxHeight().aspectRatio(1f).padding(6.dp),
+            )
+        }
 
+        // Boutons toujours visibles en bas.
         if (tech.usesCut) {
             Button(
                 onClick = { vm.trainerCutTap() },
@@ -355,7 +362,7 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
         }
 
         if (!running && result == null) {
-            Button(onClick = { vm.trainerStart() }, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { vm.trainerStart() }, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
                 Text("▶  Go !")
             }
         }
