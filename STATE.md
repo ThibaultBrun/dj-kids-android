@@ -44,6 +44,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-10 04:42 : Play Store API testée → `fr.tbrun.djkids` n'existe pas encore en Play Console (**création manuelle requise**). Script `scripts/publish.py` créé + métadonnées store (`store/en-US/` et `store/fr-FR/` : title, short_description, full_description). Pas de build lancé (gradle propre, disque 96%).
 - 2026-10-10 03:55 : `TechniqueAnimation` ajoutée dans LevelPicker — Canvas animé 68dp : jog → vinyle + flèche directionnelle Cyan/Pink pulsante ; cut → crossfader + ondes Violet. BUILD SUCCESSFUL 21s. Commit 7d53382 pushé.
 - 2026-10-11 03:25 : Keystore release généré (`~/djkids-release.jks`) + AAB signé 13Mo (`bundleRelease` BUILD SUCCESSFUL 1m50s). Privacy policy déployée sur https://djkids.tbrun.dev/privacy (Caddy + DNS OK).
 - 2026-10-11 03:15 : LevelPicker — composable `RhythmPreview` (dots Canvas : gros point = temps fort, petit = subdivision, actif/grisé selon locked) + `docs/privacy.html` (politique de confidentialité prête pour djkids.tbrun.dev/privacy). BUILD SUCCESSFUL 29s. Commit 4233231 pushé.
@@ -51,7 +52,8 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 - 2026-10-10 22:30 : ScratchPad → disque vinyle Canvas animé (sillons, étiquette Violet, marqueur rotatif LaunchedEffect). Commit 5df3ef1.
 
 ## Prochaine priorité
-- **Chantier Play Store** : upload AAB via API Android Publisher (`~/.secrets/pista-play.json` — vérifier accès compte Play Console Thibault ; sinon créer l'app dans la console manuellement).
+- **Chantier Play Store** : ⚠️ **action manuelle Thibault requise** — créer l'app `fr.tbrun.djkids` dans https://play.google.com/console, puis accorder le rôle "Release Manager" au SA `publisher@pista-498813.iam.gserviceaccount.com`. Ensuite : `python3 scripts/publish.py --track internal`.
+- Métadonnées store prêtes dans `store/en-US/` et `store/fr-FR/`.
 - **Icône + feature graphic** : DA soignée, pas générique IA.
 - **Phase 4 Oboe** : NDK/JNI basse latence scratch. Nécessite NDK (⚠️ disque à 95%, NDK ~1.5Go — libérer de l'espace d'abord). NDK 26.3 recommandé.
 - [x] Trainer UX : description animée de chaque technique scratch — `TechniqueAnimation` done (commit 7d53382).
