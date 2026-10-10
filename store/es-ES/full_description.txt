@@ -1,0 +1,26 @@
+DJ Kids convierte tu Hercules DJControl Inpulse 200 MK3 en una máquina de aprender scratch.
+
+APRENDE TÉCNICAS REALES DE SCRATCH
+Un curriculum progresivo basado en los movimientos que usan los DJs de verdad:
+• Baby scratch — la base
+• Forward, chirp, tear, scribble — nivel intermedio
+• Transformer, flare, orbit — técnicas avanzadas
+
+CÓMO FUNCIONA
+Conecta tu MK3 por USB. DJ Kids lo detecta automáticamente y mapea cada botón, fader y plato. Inicia una sesión de entrenamiento: un breakbeat suena en bucle, una cuadrícula rítmica te muestra exactamente cuándo rascar, y la app puntúa tu precisión en tiempo real.
+
+HARDWARE REAL, SKILLS REALES
+Esto no es un juego de taps. Usas el plato real para scratch, el crossfader para cortar y los botones de EQ para dar forma al sonido. Cada movimiento que aprendes aquí se transfiere directamente a una cabina de DJ de verdad.
+
+DOS PLATOS, MEZCLADORA COMPLETA
+Fuera del modo entrenamiento tienes un setup completo de 2 platos con:
+• EQ de 3 bandas por plato
+• Control de pitch/tempo
+• Crossfader
+• Monitor MIDI para verificar tus mappings
+
+COMPATIBLE CON
+• Hercules DJControl Inpulse 200 MK3 (USB class-compliant, sin drivers)
+
+PRIVACIDAD
+DJ Kids funciona totalmente sin conexión. Sin cuentas, sin recopilación de datos, sin internet requerido.

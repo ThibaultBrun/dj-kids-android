@@ -19,6 +19,8 @@ PACKAGE = "fr.tbrun.djkids"
 RELEASE_NOTES = {
     "en-US": "Initial release — learn to scratch on your Hercules DJControl Inpulse 200 MK3.",
     "fr-FR": "Première version — apprenez le scratch sur votre Hercules DJControl Inpulse 200 MK3.",
+    "es-ES": "Primera versión — aprende scratch con tu Hercules DJControl Inpulse 200 MK3.",
+    "de-DE": "Erste Version — lerne Scratch mit deinem Hercules DJControl Inpulse 200 MK3.",
 }
 
 
