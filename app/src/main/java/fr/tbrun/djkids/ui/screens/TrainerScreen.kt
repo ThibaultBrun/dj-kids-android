@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
@@ -155,7 +156,11 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
             Text("${tech.emoji} ${tech.name} — N${lvl.index}", color = Cyan, fontWeight = FontWeight.Bold)
             OutlinedButton(onClick = onQuit) { Text("Quitter") }
         }
-        Text("Combo x$combo", color = Amber, fontSize = 13.sp)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text("Combo x$combo", color = Amber, fontSize = 13.sp)
+            Text("·", color = TextLo, fontSize = 13.sp)
+            Text("${lvl.bpm} BPM", color = Cyan, fontSize = 13.sp)
+        }
 
         // Autoroute de notes
         NoteHighway(
@@ -312,6 +317,22 @@ private fun ScratchPad(enabled: Boolean, onScrub: (Double) -> Unit, onStroke: ()
             // Border ring
             val borderColor = if (enabled) Cyan else TextLo
             drawCircle(borderColor, r, Offset(cx, cy), style = androidx.compose.ui.graphics.drawscope.Stroke(width = 4f))
+
+            // Speed arc — glows around the border proportional to scratch velocity
+            if (enabled && abs(currentSpeed) > 0.05f) {
+                val speedMag = (abs(currentSpeed) / 3f).coerceIn(0f, 1f)
+                val sweepAngle = speedMag * 270f * if (currentSpeed > 0) 1f else -1f
+                val arcColor = if (speedMag < 0.5f) Lime else Pink
+                drawArc(
+                    color = arcColor.copy(alpha = 0.3f + speedMag * 0.6f),
+                    startAngle = -90f,
+                    sweepAngle = sweepAngle,
+                    useCenter = false,
+                    topLeft = Offset(cx - r, cy - r),
+                    size = Size(r * 2f, r * 2f),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 8f),
+                )
+            }
 
             // Centre label (colored circle)
             val labelColor = if (enabled) Violet else Color(0xFF303040)
