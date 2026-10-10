@@ -182,7 +182,8 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
         }
 
         Text(
-            "Scratche avec le jog de la platine 🎛️ ou au doigt 👇",
+            if (tech.usesCut) "Fais tourner le son et coupe sur le rythme : crossfader de la platine 🎛️ ou bouton CUT 👇"
+            else "Scratche avec le jog de la platine 🎛️ ou au doigt 👇",
             color = TextLo, fontSize = 11.sp,
             modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
         )
@@ -193,6 +194,14 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
             onStroke = { vm.scratchStroke() },
             modifier = Modifier.fillMaxWidth().aspectRatio(1f).padding(8.dp),
         )
+
+        if (tech.usesCut) {
+            Button(
+                onClick = { vm.trainerCutTap() },
+                enabled = running,
+                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+            ) { Text("✂️  CUT") }
+        }
 
         if (!running && result == null) {
             Button(onClick = { vm.trainerStart() }, modifier = Modifier.fillMaxWidth()) {

@@ -50,6 +50,10 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     @Volatile private var lastJogMs = 0L
     private var jogWatchdog: Job? = null
 
+    // Exercices avec le cut (crossfader).
+    private var currentUsesCut = false
+    private var faderClosed = false
+
     private val _monitor = MutableStateFlow<List<String>>(emptyList())
     val monitor: StateFlow<List<String>> = _monitor
 
@@ -81,10 +85,12 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
             return
         }
         val action = mapping.resolve(msg)
-        // En mode apprentissage, le jog de la platine pilote le scratch (pas les platines DJ).
-        if (trainerActive && action is MidiAction.Jog) {
-            onTrainerJog(action.delta)
-            return
+        // En mode apprentissage, le jog et le crossfader de la platine pilotent le scratch (pas les platines DJ).
+        if (trainerActive) {
+            if (action is MidiAction.Jog) { onTrainerJog(action.delta); return }
+            if (action is MidiAction.Continuous && action.fn == ControlFunction.CROSSFADER) {
+                onTrainerCut(action.value); return
+            }
         }
         engine.apply(action)
     }
@@ -94,12 +100,35 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
         lastJogMs = System.currentTimeMillis()
         scratch.setScratchSpeed(delta.toDouble() * SCRATCH_JOG_GAIN)
         val s = if (delta > 0.01f) 1 else if (delta < -0.01f) -1 else 0
-        if (s != 0 && jogSign != 0 && s != jogSign) {
-            // Changement de direction = un aller-retour terminé = une attaque à scorer.
+        // Pour une technique de cut, le jog ne fait que produire le son : on ne score QUE le crossfader.
+        if (!currentUsesCut && s != 0 && jogSign != 0 && s != jogSign) {
             scratch.pluck()
             trainer.registerScratch()
         }
         if (s != 0) jogSign = s
+    }
+
+    /** Position du crossfader MK3 pendant le trainer : coupe réellement le son + score les cuts. */
+    private fun onTrainerCut(value: Float) {
+        // Le crossfader ouvre/ferme la voie : loin du centre (0 ou 1) = coupé pour l'exercice.
+        val open = value in 0.25f..0.75f
+        scratch.setFader(if (open) 1f else 0f)
+        if (currentUsesCut) {
+            // Front descendant (ouvert → coupé) = un coup de cut, calé sur le rythme.
+            if (!open && !faderClosed) { faderClosed = true; trainer.registerScratch() }
+            if (open && faderClosed) faderClosed = false
+        }
+    }
+
+    /** Cut au doigt (bouton de l'écran) : un coup de crossfader simulé. */
+    fun trainerCutTap() {
+        if (!currentUsesCut) return
+        viewModelScope.launch {
+            scratch.setFader(0f)
+            trainer.registerScratch()
+            delay(70)
+            scratch.setFader(1f)
+        }
     }
 
     // --- MIDI ---
@@ -143,6 +172,9 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
         ensureSamples()
         trainer.load(level)
         scratch.setBreakBpm(SoundBank.defaultBreak.bpm, level.bpm)
+        currentUsesCut = technique.usesCut
+        faderClosed = false
+        scratch.setFader(1f)
     }
 
     fun trainerStart() {

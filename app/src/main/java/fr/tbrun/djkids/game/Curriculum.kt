@@ -46,6 +46,12 @@ data class Technique(
     /** Explication du geste, affichée avant de lancer le niveau. */
     val howTo: String,
     val levels: List<Level>,
+    /**
+     * true = technique qui se score sur le **cut** (crossfader) et non sur l'aller-retour du jog.
+     * Le jog ne fait alors que produire le son ; c'est le coup de crossfader calé sur le rythme
+     * qui est jugé (forward, chirp, transformer, flare…).
+     */
+    val usesCut: Boolean = false,
 )
 
 object Curriculum {
@@ -70,12 +76,23 @@ object Curriculum {
             levels = standardLevels(70),
         ),
         Technique(
+            id = "cut",
+            name = "Le cut",
+            emoji = "✂️",
+            description = "Hacher le son avec le crossfader, bien sur le rythme. La base de toutes les coupes.",
+            howTo = "Laisse le son tourner et coupe-le net avec le crossfader à chaque voyant. " +
+                "Ici on ne juge que le CUT (le crossfader), pas le jog.",
+            levels = standardLevels(70),
+            usesCut = true,
+        ),
+        Technique(
             id = "forward",
             name = "Forward scratch",
             emoji = "▶️",
             description = "On ne garde que le son quand on pousse vers l'avant (crossfader coupé au retour).",
             howTo = "Pousse le jog vers l'avant sur le temps, coupe au retour. Un son net par hit.",
             levels = standardLevels(72),
+            usesCut = true,
         ),
         Technique(
             id = "chirp",
@@ -84,6 +101,7 @@ object Curriculum {
             description = "Un \"tchirp\" : on coupe le crossfader au tout début et à la fin du mouvement.",
             howTo = "Lance le son puis coupe vite : ça fait un petit cri d'oiseau. Avant ET arrière.",
             levels = standardLevels(74),
+            usesCut = true,
         ),
         Technique(
             id = "tear",
@@ -108,6 +126,7 @@ object Curriculum {
             description = "Le son continu est haché par des coups de crossfader.",
             howTo = "Bouge le jog lentement et hache avec le crossfader sur chaque hit.",
             levels = standardLevels(76),
+            usesCut = true,
         ),
         Technique(
             id = "flare",
@@ -116,6 +135,7 @@ object Curriculum {
             description = "Scratch avancé : un (ou deux) \"clics\" de crossfader pendant le mouvement.",
             howTo = "Mouvement continu + 1 clic de crossfader au milieu. Niveau expert.",
             levels = standardLevels(80),
+            usesCut = true,
         ),
     )
 
