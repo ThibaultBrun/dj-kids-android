@@ -17,10 +17,11 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 
 ## Roadmap
 1. [x] Phase 1 — MIDI monitor
-2. [~] Phase 2/3 — 2 platines + mixer + crossfader + EQ 3 bandes + pitch/tempo + MIDI learn/mapping (code écrit, commit 950f3de)
-3. [x] APK debug compile ✅ (app-debug.apk 19 Mo, BUILD SUCCESSFUL 2026-10-10 01:07)
-4. [ ] Phase 4 — scratch basse latence (Oboe) + 8 pads + sync affinés
-5. [ ] Preset mapping MK3 **validé sur hardware réel** (bloquant publication — attendre les codes MIDI de Thibault via l'écran Monitor)
+2. [x] Phase 2/3 — 2 platines + mixer + crossfader + EQ 3 bandes + pitch/tempo + MIDI learn/mapping
+3. [x] APK debug compile ✅ (app-debug.apk 19 Mo)
+4. [x] Phase 3b — TrainerScreen : 7 techniques x5 niveaux, autoroute Canvas, platine tactile, scoring, unlock progressif (commit 18f6828, BUILD SUCCESSFUL 2026-10-10 23:45)
+5. [ ] Phase 4 — scratch basse latence Oboe (NDK/JNI) — AudioTrack LOW_LATENCY actuel OK pour le trainer
+6. [ ] Preset mapping MK3 **validé sur hardware réel** (bloquant publication — attendre les codes MIDI de Thibault via l'écran Monitor)
 ### 🎚️ Banque de sons + Mode Apprentissage du scratch (demande Thibault 2026-10-10)
 - **Banque de sons intégrée** : samples de scratch classiques (vocal "Ahh"/"Fresh"), breakbeats, FX. Bundlés dans `app/src/main/assets/` (⚠️ licences CC0/royalty-free obligatoires pour le Play Store). Modèle = `audio/SoundBank.kt`.
 - **Mode "jeu" = apprentissage du scratch** (PAS DJ Hero). Trainer rythmique : breakbeat en boucle + métronome + pattern visuel des temps où scratcher, scoring de la précision (timing du jog).
@@ -43,6 +44,6 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
-- 2026-10-10 ~01:05 : Maven OK. Build compilait → 2 erreurs Kotlin (OpenDocument sans `()`, import `lazy.item` invalide) corrigées. Build debug relancé en détaché.
-- Nouvel objectif confirmé par Thibault : **publier sur le Play Store** pour tous les possesseurs de MK3.
-- Décision backend : **app 100% locale/offline** (lecture audio du téléphone + MIDI USB). Pas d'auth ni d'API. Domaine `djkids.tbrun.dev` servira juste la page privacy (exigée par Play) et le site vitrine.
+- 2026-10-10 23:45 : TrainerScreen + ScratchEngine + PcmSample + TrainerEngine ajoutés, bug Offset(Double) corrigé. BUILD SUCCESSFUL 25s. Commit 18f6828 pushé sur main.
+- Onglet "Scratch" opérationnel dans l'APK : sélection technique/niveau, autoroute de notes Canvas temps réel, platine tactile drag ↕.
+- Prochaine priorité : assets audio manquants (WAV breakbeat/scratch dans assets/sounds/) et Oboe latence si besoin.
