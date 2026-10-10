@@ -121,6 +121,11 @@ private fun LevelPicker(vm: DjViewModel, tech: Technique, onBack: () -> Unit, on
             Text("  ${tech.emoji} ${tech.name}", style = MaterialTheme.typography.titleLarge, color = Cyan)
         }
         Text(tech.howTo, color = TextLo, fontSize = 12.sp, modifier = Modifier.padding(vertical = 8.dp))
+        TechniqueAnimation(
+            technique = tech,
+            modifier = Modifier.fillMaxWidth().height(68.dp).padding(bottom = 10.dp)
+                .clip(RoundedCornerShape(10.dp)).background(Surface1),
+        )
         LazyColumn {
             items(tech.levels) { l ->
                 val locked = l.index > unlocked
@@ -141,6 +146,60 @@ private fun LevelPicker(vm: DjViewModel, tech: Technique, onBack: () -> Unit, on
                     }
                 }
             }
+        }
+    }
+}
+
+/** Mini animation illustrant le geste d'une technique (jog ↔ ou crossfader). */
+@Composable
+private fun TechniqueAnimation(technique: Technique, modifier: Modifier = Modifier) {
+    var phase by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(technique.id) {
+        while (true) {
+            withInfiniteAnimationFrameMillis { ms -> phase = (ms % 2400L).toFloat() / 2400f }
+        }
+    }
+    Canvas(modifier = modifier) {
+        val w = size.width; val h = size.height
+        if (technique.usesCut) {
+            // Crossfader animé + onde sonore
+            val trackY = h * 0.72f
+            val tL = w * 0.08f; val tR = w * 0.92f
+            drawLine(Surface2, Offset(tL, trackY), Offset(tR, trackY), strokeWidth = 8f)
+            val t = sin(phase * 2f * 3.14159f) * 0.5f + 0.5f
+            val knobX = tL + t * (tR - tL)
+            drawCircle(Cyan, 16f, Offset(knobX, trackY))
+            drawCircle(Surface1, 8f, Offset(knobX, trackY))
+            val open = if (knobX > w * 0.35f && knobX < w * 0.65f) 0.85f else 0.15f
+            for (i in 0..2) {
+                drawCircle(
+                    Violet.copy(alpha = (open * (1f - i * 0.28f)).coerceIn(0f, 1f)),
+                    (20 + i * 13).toFloat(),
+                    Offset(w * 0.5f, h * 0.3f),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(2f),
+                )
+            }
+        } else {
+            // Mini vinyle + flèche directionnelle
+            val cx = w * 0.26f; val cy = h * 0.5f; val r = (h * 0.38f).coerceAtMost(w * 0.22f)
+            drawCircle(Color(0xFF1A1A24), r, Offset(cx, cy))
+            for (i in 1..5) {
+                drawCircle(Color(0xFF2A2A38), r * (0.42f + i * 0.1f), Offset(cx, cy),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(1.2f))
+            }
+            drawCircle(Violet, r * 0.32f, Offset(cx, cy))
+            val angle = phase * 2f * 3.14159f
+            drawLine(Lime, Offset(cx, cy), Offset(cx + r * 0.55f * sin(angle), cy - r * 0.55f * cos(angle)), strokeWidth = 3f)
+            drawCircle(Color(0xFF0E0E14), 5f, Offset(cx, cy))
+            drawCircle(Cyan, r, Offset(cx, cy), style = androidx.compose.ui.graphics.drawscope.Stroke(2.5f))
+            // Flèche indiquant la direction du geste
+            val dir = if (phase < 0.5f) 1f else -1f
+            val alpha = if (phase < 0.5f) (phase * 4f).coerceIn(0f, 1f) else ((1f - phase) * 4f).coerceIn(0f, 1f)
+            val arrowColor = (if (dir > 0) Cyan else Pink).copy(alpha = alpha.coerceIn(0.15f, 1f))
+            val aX = w * 0.56f; val aY = h * 0.5f; val aLen = w * 0.26f; val aHead = h * 0.2f
+            drawLine(arrowColor, Offset(aX, aY), Offset(aX + dir * aLen, aY), strokeWidth = 4f)
+            drawLine(arrowColor, Offset(aX + dir * aLen, aY), Offset(aX + dir * aLen - dir * 12f, aY - aHead), strokeWidth = 4f)
+            drawLine(arrowColor, Offset(aX + dir * aLen, aY), Offset(aX + dir * aLen - dir * 12f, aY + aHead), strokeWidth = 4f)
         }
     }
 }
