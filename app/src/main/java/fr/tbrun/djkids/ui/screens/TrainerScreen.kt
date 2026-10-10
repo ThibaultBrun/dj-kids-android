@@ -74,7 +74,7 @@ fun TrainerScreen(vm: DjViewModel) {
     val tech = technique
     val lvl = level
     when {
-        tech == null -> ChapterPicker { technique = it }
+        tech == null -> ChapterPicker(vm) { technique = it }
         lvl == null -> LevelPicker(vm, tech, onBack = { technique = null }, onPick = {
             level = it
             vm.trainerSelect(tech, it)
@@ -88,20 +88,36 @@ fun TrainerScreen(vm: DjViewModel) {
 }
 
 @Composable
-private fun ChapterPicker(onPick: (Technique) -> Unit) {
+private fun ChapterPicker(vm: DjViewModel, onPick: (Technique) -> Unit) {
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Text("Apprendre le scratch", style = MaterialTheme.typography.titleLarge, color = Lime)
         Text("Choisis une technique", color = TextLo, fontSize = 13.sp)
         Spacer(Modifier.height(12.dp))
         LazyVerticalGrid(columns = GridCells.Fixed(2), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(Curriculum.techniques) { t ->
+                val unlockedUpTo = vm.unlockedLevel(t.id)
+                val done = unlockedUpTo > t.levels.size
+                val borderColor = when {
+                    done -> Lime.copy(alpha = 0.6f)
+                    unlockedUpTo > 1 -> Cyan.copy(alpha = 0.5f)
+                    else -> Violet.copy(alpha = 0.4f)
+                }
                 Column(
                     Modifier.padding(bottom = 10.dp).clip(RoundedCornerShape(14.dp))
-                        .background(Surface2).border(1.dp, Violet.copy(alpha = 0.4f), RoundedCornerShape(14.dp))
+                        .background(Surface2).border(1.dp, borderColor, RoundedCornerShape(14.dp))
                         .padding(14.dp)
                         .pointerInput(t.id) { detectTapGestures { onPick(t) } },
                 ) {
-                    Text(t.emoji, fontSize = 30.sp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(t.emoji, fontSize = 30.sp)
+                        if (done) {
+                            Spacer(Modifier.weight(1f))
+                            Text("✓", color = Lime, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        } else if (unlockedUpTo > 1) {
+                            Spacer(Modifier.weight(1f))
+                            Text("N${unlockedUpTo - 1}/5", color = Cyan, fontSize = 11.sp)
+                        }
+                    }
                     Spacer(Modifier.height(6.dp))
                     Text(t.name, color = Cyan, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     Text(t.description, color = TextLo, fontSize = 11.sp)
@@ -310,8 +326,11 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
         }
     }
 
+    LaunchedEffect(result) {
+        if (result != null) vm.onTrainerResult(tech.id, lvl.index)
+    }
+
     result?.let { r ->
-        vm.onTrainerResult(tech.id, lvl.index)
         ResultDialog(
             accuracy = r.accuracy, passed = r.passed, maxCombo = r.maxCombo,
             hasNext = lvl.index < tech.levels.size,
