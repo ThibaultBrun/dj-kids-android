@@ -89,10 +89,28 @@ fun TrainerScreen(vm: DjViewModel) {
 
 @Composable
 private fun ChapterPicker(vm: DjViewModel, onPick: (Technique) -> Unit) {
+    val soundsAvailable by vm.soundsAvailable.collectAsStateWithLifecycle()
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Text("Apprendre le scratch", style = MaterialTheme.typography.titleLarge, color = Lime)
         Text("Choisis une technique", color = TextLo, fontSize = 13.sp)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
+        if (!soundsAvailable) {
+            Row(
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+                    .background(Amber.copy(alpha = 0.12f))
+                    .border(1.dp, Amber.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text("🔇", fontSize = 16.sp)
+                Text(
+                    "Mode démo · pas d'audio (samples manquants)",
+                    color = Amber, fontSize = 11.sp,
+                )
+            }
+        }
+        Spacer(Modifier.height(8.dp))
         LazyVerticalGrid(columns = GridCells.Fixed(2), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(Curriculum.techniques) { t ->
                 val unlockedUpTo = vm.unlockedLevel(t.id)

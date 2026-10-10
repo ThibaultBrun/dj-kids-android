@@ -45,6 +45,10 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     private var scratchSampleLoaded = false
     private var trainerActive = false
 
+    private val _soundsAvailable = MutableStateFlow(false)
+    /** true si au moins un sample audio a été trouvé dans les assets. */
+    val soundsAvailable: StateFlow<Boolean> = _soundsAvailable
+
     // Pilotage du scratch par le vrai jog de la MK3 (en plus du tactile).
     private var jogSign = 0
     @Volatile private var lastJogMs = 0L
@@ -155,9 +159,12 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     private fun ensureSamples() {
         if (scratchSampleLoaded) return
         val ctx = getApplication<Application>()
-        scratch.setScratchSample(PcmSample.fromAsset(ctx, SoundBank.defaultScratch.file))
-        scratch.setBreak(PcmSample.fromAsset(ctx, SoundBank.defaultBreak.file))
+        val scratchSample = PcmSample.fromAsset(ctx, SoundBank.defaultScratch.file)
+        val breakSample = PcmSample.fromAsset(ctx, SoundBank.defaultBreak.file)
+        scratch.setScratchSample(scratchSample)
+        scratch.setBreak(breakSample)
         scratchSampleLoaded = true
+        _soundsAvailable.value = scratchSample != null || breakSample != null
     }
 
     /** Niveau débloqué le plus haut pour une technique (1 par défaut). */
