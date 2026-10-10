@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1A1A3E"/>
+      <stop offset="100%" stop-color="#0A0A18"/>
+    </radialGradient>
+    <radialGradient id="vinyl" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2A2A4A"/>
+      <stop offset="100%" stop-color="#12121F"/>
+    </radialGradient>
+    <radialGradient id="label" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF6B8A"/>
+      <stop offset="100%" stop-color="#FF2D5A"/>
+    </radialGradient>
+    <filter id="glow-cyan">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-pink">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded rect (Play Store icon safe zone) -->
+  <rect width="512" height="512" rx="80" ry="80" fill="url(#bg)"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="256" x2="512" y2="256" stroke="#1E1E40" stroke-width="1"/>
+  <line x1="256" y1="0" x2="256" y2="512" stroke="#1E1E40" stroke-width="1"/>
+
+  <!-- Vinyl record -->
+  <circle cx="256" cy="256" r="190" fill="url(#vinyl)" stroke="#00E5FF" stroke-width="3" filter="url(#glow-cyan)"/>
+
+  <!-- Grooves -->
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#252550" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#252550" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#252550" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="110" fill="none" stroke="#252550" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="90" fill="none" stroke="#252550" stroke-width="1.5"/>
+
+  <!-- Label central pink -->
+  <circle cx="256" cy="256" r="70" fill="url(#label)" filter="url(#glow-pink)"/>
+
+  <!-- DJ Kids text on label -->
+  <text x="256" y="248" font-family="monospace,sans-serif" font-size="22" font-weight="bold" fill="#fff" text-anchor="middle" letter-spacing="2">DJ</text>
+  <text x="256" y="276" font-family="monospace,sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle" letter-spacing="3">KIDS</text>
+
+  <!-- Center hole -->
+  <circle cx="256" cy="256" r="10" fill="#0A0A18"/>
+
+  <!-- Tonearm — from top-right toward center -->
+  <!-- Pivot -->
+  <circle cx="390" cy="110" r="14" fill="#00E5FF" filter="url(#glow-cyan)"/>
+  <!-- Arm body -->
+  <line x1="390" y1="110" x2="285" y2="228" stroke="#00E5FF" stroke-width="7" stroke-linecap="round" filter="url(#glow-cyan)"/>
+  <!-- Headshell -->
+  <rect x="272" y="218" width="28" height="16" rx="4" fill="#FF4D6D" transform="rotate(-40 286 226)" filter="url(#glow-pink)"/>
+
+  <!-- Cyan glow ring accent -->
+  <circle cx="256" cy="256" r="192" fill="none" stroke="#00E5FF" stroke-width="1" opacity="0.3"/>
+</svg>
