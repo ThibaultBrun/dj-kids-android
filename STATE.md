@@ -44,6 +44,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-10 08:43 : Icône 512×512 Play Store créée (SVG vinyle+bras cyan+label rose → PNG Chromium). Commit 6aee44d pushé.
 - 2026-10-10 08:22 : Store listings **nl-NL** + **ja-JP** créés → 8 langues total. publish.py RELEASE_NOTES 8 langues. `docs/play-store-checklist.md` créé (content rating EVERYONE/3+, data safety no-data, screenshots roadmap, permissions). Commit 7cba012 pushé. BUILD SUCCESSFUL (build précédent 18s).
 - 2026-10-10 07:22 : Store listings **it-IT** + **pt-BR** créés (titre/court/long) + publish.py RELEASE_NOTES 6 langues. BUILD SUCCESSFUL 18s.
 - 2026-10-10 07:20 : Store listings **es-ES** + **de-DE** créés (titre/court/long/feature_graphic) + publish.py RELEASE_NOTES 4 langues. Commit c0ba418 pushé. Build précédent : BUILD SUCCESSFUL 18s.
@@ -63,7 +64,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 - **Chantier Play Store** : ⚠️ **action manuelle Thibault requise** — créer l'app `fr.tbrun.djkids` dans https://play.google.com/console, puis accorder le rôle "Release Manager" au SA `publisher@pista-498813.iam.gserviceaccount.com`. Ensuite : `python3 scripts/publish.py --track internal`.
 - Métadonnées store prêtes : `store/` 8 langues (en-US, fr-FR, es-ES, de-DE, it-IT, pt-BR, nl-NL, ja-JP).
 - Checklist Play Store : `docs/play-store-checklist.md` (content rating, data safety, screenshots, icône 512px, permissions).
-- **Icône 512px** : extraire depuis APK ou rebuilder pour Play Console.
+- [x] **Icône 512px** : `store/icon_512.png` (SVG source + PNG 512×512 rendu Chromium, commit 6aee44d).
 - **Screenshots** : 4 captures phone à faire (adb screencap sur device/émulateur).
 - **Phase 4 Oboe** : NDK/JNI basse latence scratch. Nécessite NDK (⚠️ disque à 95%, NDK ~1.5Go — libérer de l'espace d'abord). NDK 26.3 recommandé.
 - [x] Trainer UX : description animée de chaque technique scratch — `TechniqueAnimation` done (commit 7d53382).
