@@ -39,17 +39,19 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 6. [ ] Nom store sans violer la marque Hercules/Inpulse (app = "DJ Kids" ; usage nominatif "compatible Hercules DJControl Inpulse 200 MK3" OK en description, pas dans le titre)
 7. [ ] Icône + feature graphic + captures (DA soignée, pas générique IA)
 8. [ ] Politique de confidentialité hébergée (app offline → policy simple) : `djkids.tbrun.dev/privacy`
-9. [ ] Keystore release + signing ; AAB release (local ou Codemagic)
+9. [x] Keystore release + signing ; AAB release ✅ — `~/djkids-release.jks` (alias djkids-release, 10000j) ; creds dans `~/.djkids-keystore.env` (chmod 600) ; AAB 13Mo dans `app/build/outputs/bundle/release/app-release.aab`
 10. [ ] Fiche + upload via API Android Publisher (SA `pista-play.json` — vérifier accès au compte Play Console ; sinon créer l'app dans la console)
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-11 03:25 : Keystore release généré (`~/djkids-release.jks`) + AAB signé 13Mo (`bundleRelease` BUILD SUCCESSFUL 1m50s). Privacy policy déployée sur https://djkids.tbrun.dev/privacy (Caddy + DNS OK).
 - 2026-10-11 03:15 : LevelPicker — composable `RhythmPreview` (dots Canvas : gros point = temps fort, petit = subdivision, actif/grisé selon locked) + `docs/privacy.html` (politique de confidentialité prête pour djkids.tbrun.dev/privacy). BUILD SUCCESSFUL 29s. Commit 4233231 pushé.
 - 2026-10-11 02:42 : TrainerScreen UX — BPM affiché à côté du combo pendant la session + arc de vitesse lumineux sur le vinyle (Lime→Pink selon intensité, sens = direction du jog). BUILD SUCCESSFUL 25s. Commit cb3d4c9 pushé sur main.
 - 2026-10-10 22:30 : ScratchPad → disque vinyle Canvas animé (sillons, étiquette Violet, marqueur rotatif LaunchedEffect). Commit 5df3ef1.
 
 ## Prochaine priorité
-- **Phase 4 Oboe** ou **chantier Play Store** (icône + release APK). Oboe nécessite NDK/JNI.
-- Privacy policy HTML prête dans `docs/privacy.html` → déployer sur djkids.tbrun.dev/privacy (VPS Caddy).
-- Icône + feature graphic : DA soignée, pas générique IA.
-- Trainer UX restant : LevelPicker RhythmPreview ✅ — reste éventuellement une description animée/gif de chaque technique.
+- **Chantier Play Store** : upload AAB via API Android Publisher (`pista-play.json` — vérifier accès compte Play Console Thibault ; sinon créer l'app dans la console manuellement).
+- **Icône + feature graphic** : DA soignée, pas générique IA.
+- **Phase 4 Oboe** : NDK/JNI basse latence scratch. Nécessite NDK installé.
+- Trainer UX restant : description animée de chaque technique scratch.
+- Codemagic : configurer `DJKIDS_KEYSTORE_*` comme secrets pour CI.
