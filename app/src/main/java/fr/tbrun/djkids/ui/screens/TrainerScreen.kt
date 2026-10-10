@@ -1,5 +1,6 @@
 package fr.tbrun.djkids.ui.screens
 
+import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,7 +28,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,6 +60,8 @@ import fr.tbrun.djkids.ui.theme.Surface2
 import fr.tbrun.djkids.ui.theme.TextLo
 import fr.tbrun.djkids.ui.theme.Violet
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun TrainerScreen(vm: DjViewModel) {
@@ -158,21 +164,29 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
             modifier = Modifier.fillMaxWidth().height(120.dp).padding(vertical = 10.dp),
         )
 
-        // Feedback de jugement
-        Box(Modifier.fillMaxWidth().height(28.dp), contentAlignment = Alignment.Center) {
-            lastJudgement?.let {
-                Text(it.label, color = when (it) {
-                    Judgement.PERFECT -> Lime; Judgement.GOOD -> Cyan; Judgement.OK -> Amber; Judgement.MISS -> Pink
-                }, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        // Compte à rebours pendant le count-in (positionBeat < 0)
+        if (running && positionBeat < 0) {
+            val countBeat = ((-positionBeat).toInt() + 1).coerceIn(1, 4)
+            Box(Modifier.fillMaxWidth().height(36.dp), contentAlignment = Alignment.Center) {
+                Text("$countBeat", color = Amber, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+            }
+        } else {
+            // Feedback de jugement
+            Box(Modifier.fillMaxWidth().height(36.dp), contentAlignment = Alignment.Center) {
+                lastJudgement?.let {
+                    Text(it.label, color = when (it) {
+                        Judgement.PERFECT -> Lime; Judgement.GOOD -> Cyan; Judgement.OK -> Amber; Judgement.MISS -> Pink
+                    }, fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                }
             }
         }
 
-        // Platine tactile à scratcher
+        // Platine tactile à scratcher (vinyle animé)
         ScratchPad(
             enabled = running,
             onScrub = { vm.scratchScrub(it) },
             onStroke = { vm.scratchStroke() },
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f).padding(16.dp),
+            modifier = Modifier.fillMaxWidth().aspectRatio(1f).padding(8.dp),
         )
 
         if (!running && result == null) {
@@ -232,28 +246,83 @@ private fun NoteHighway(beats: List<Pair<Double, NoteValue>>, position: Double, 
 @Composable
 private fun ScratchPad(enabled: Boolean, onScrub: (Double) -> Unit, onStroke: () -> Unit, modifier: Modifier) {
     var lastSign by remember { mutableStateOf(0) }
-    Box(
-        modifier = modifier.clip(CircleShape)
-            .background(if (enabled) Surface2 else Surface1)
-            .border(3.dp, if (enabled) Cyan else TextLo, CircleShape)
-            .pointerInput(enabled) {
-                if (!enabled) return@pointerInput
-                detectDragGestures(
-                    onDragEnd = { onScrub(0.0); lastSign = 0 },
-                    onDragCancel = { onScrub(0.0); lastSign = 0 },
-                ) { change, drag ->
-                    change.consume()
-                    val speed = drag.x.toDouble() * 0.06
-                    onScrub(speed)
-                    val sign = if (drag.x > 1f) 1 else if (drag.x < -1f) -1 else 0
-                    // Un changement de direction = un aller-retour terminé = une attaque.
-                    if (sign != 0 && lastSign != 0 && sign != lastSign) onStroke()
-                    if (sign != 0) lastSign = sign
+    // currentSpeed is set by drag gestures; the animation loop reads it to rotate the vinyl.
+    var currentSpeed by remember { mutableFloatStateOf(0f) }
+    var rotation by remember { mutableFloatStateOf(0f) }
+
+    // Animate vinyl rotation driven by currentSpeed (deg/frame at ~60fps).
+    LaunchedEffect(enabled) {
+        while (true) {
+            withInfiniteAnimationFrameMillis { frameMs ->
+                if (enabled && abs(currentSpeed) > 0.001f) {
+                    rotation += currentSpeed * 3f
                 }
-            },
+            }
+        }
+    }
+
+    Box(
+        modifier = modifier.pointerInput(enabled) {
+            if (!enabled) return@pointerInput
+            detectDragGestures(
+                onDragEnd = { onScrub(0.0); currentSpeed = 0f; lastSign = 0 },
+                onDragCancel = { onScrub(0.0); currentSpeed = 0f; lastSign = 0 },
+            ) { change, drag ->
+                change.consume()
+                val speed = drag.x.toDouble() * 0.06
+                onScrub(speed)
+                currentSpeed = (drag.x * 0.06f).coerceIn(-3f, 3f)
+                val sign = if (drag.x > 1f) 1 else if (drag.x < -1f) -1 else 0
+                if (sign != 0 && lastSign != 0 && sign != lastSign) onStroke()
+                if (sign != 0) lastSign = sign
+            }
+        },
         contentAlignment = Alignment.Center,
     ) {
-        Text(if (enabled) "✋ scratche !" else "Appuie sur Go", color = TextLo, fontSize = 13.sp)
+        // Vinyl disc drawn with Canvas
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cx = size.width / 2f
+            val cy = size.height / 2f
+            val r = size.minDimension / 2f * 0.95f
+            val labelR = r * 0.32f
+
+            // Outer vinyl (dark grey)
+            drawCircle(Color(0xFF1A1A24), r, Offset(cx, cy))
+
+            // Groove rings (subtle, semi-transparent)
+            val grooveColor = Color(0xFF2A2A38)
+            for (i in 1..10) {
+                drawCircle(grooveColor, r * (0.38f + i * 0.055f), Offset(cx, cy), style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.5f))
+            }
+
+            // Border ring
+            val borderColor = if (enabled) Cyan else TextLo
+            drawCircle(borderColor, r, Offset(cx, cy), style = androidx.compose.ui.graphics.drawscope.Stroke(width = 4f))
+
+            // Centre label (colored circle)
+            val labelColor = if (enabled) Violet else Color(0xFF303040)
+            drawCircle(labelColor, labelR, Offset(cx, cy))
+
+            // Rotating marker line on the label — shows vinyl spin
+            rotate(rotation, pivot = Offset(cx, cy)) {
+                val markerAngleRad = 0f // pointing up (12 o'clock)
+                val mx = cx + (labelR * 0.7f) * sin(markerAngleRad)
+                val my = cy - (labelR * 0.7f) * cos(markerAngleRad)
+                drawLine(
+                    color = if (enabled) Lime else TextLo,
+                    start = Offset(cx, cy),
+                    end = Offset(mx, my),
+                    strokeWidth = 4f,
+                )
+                // Small dot at center
+                drawCircle(Color(0xFF0E0E14), 6f, Offset(cx, cy))
+            }
+        }
+
+        // Hint text overlay (only shown when stopped)
+        if (!enabled) {
+            Text("▶ Go !", color = TextLo, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        }
     }
 }
 
