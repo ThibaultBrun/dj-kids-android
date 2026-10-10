@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -50,6 +51,7 @@ import fr.tbrun.djkids.game.Curriculum
 import fr.tbrun.djkids.game.Judgement
 import fr.tbrun.djkids.game.Level
 import fr.tbrun.djkids.game.NoteValue
+import fr.tbrun.djkids.game.RhythmProfile
 import fr.tbrun.djkids.game.Technique
 import fr.tbrun.djkids.ui.DjViewModel
 import fr.tbrun.djkids.ui.theme.Amber
@@ -131,14 +133,48 @@ private fun LevelPicker(vm: DjViewModel, tech: Technique, onBack: () -> Unit, on
                 ) {
                     Text(if (locked) "🔒" else "${l.index}", fontSize = 18.sp, color = if (locked) TextLo else Lime)
                     Spacer(Modifier.height(0.dp))
-                    Column(Modifier.padding(start = 12.dp)) {
+                    Column(Modifier.padding(start = 12.dp).weight(1f)) {
                         Text(l.title, color = if (locked) TextLo else Cyan, fontWeight = FontWeight.Bold)
                         Text("${l.bpm} BPM · ${l.bars} mesures", color = TextLo, fontSize = 11.sp)
+                        Spacer(Modifier.height(6.dp))
+                        RhythmPreview(l.rhythm, locked = locked)
                     }
                 }
             }
         }
     }
+}
+
+/** Mini visualisation du rythme d'un niveau : un point par slot dans une mesure à 4 temps. */
+@Composable
+private fun RhythmPreview(rhythm: RhythmProfile, locked: Boolean) {
+    val maxPerBeat = rhythm.allowed.maxOf { it.perBeat }
+    val totalSlots = 4 * maxPerBeat  // 4 temps
+    val activeColor = if (locked) TextLo else Lime
+    val inactiveColor = Surface1
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(12.dp)
+            .drawBehind {
+                val dotD = size.height * 0.7f
+                val gap = (size.width - totalSlots * dotD) / (totalSlots - 1).coerceAtLeast(1)
+                for (i in 0 until totalSlots) {
+                    val beat = i / maxPerBeat
+                    val sub = i % maxPerBeat
+                    val isBeatStart = sub == 0
+                    val isFilled = rhythm.allowed.any { it.perBeat > sub } && (!rhythm.mixed || isBeatStart || maxPerBeat > 1)
+                    val x = i * (dotD + gap) + dotD / 2
+                    val y = size.height / 2
+                    val r = if (isBeatStart) dotD / 2 else dotD * 0.35f
+                    drawCircle(
+                        color = if (isFilled) activeColor else inactiveColor,
+                        radius = r,
+                        center = Offset(x, y),
+                    )
+                }
+            }
+    )
 }
 
 @Composable
