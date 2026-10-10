@@ -113,7 +113,7 @@ class ScratchDeckEngine(private val outRate: Int = 48000) {
             var v = 0f
             if (data != null && len > 1) {
                 val speed = when {
-                    jogActive -> jogSpeed
+                    jogActive -> jogSpeed.coerceIn(-10.0, 10.0)
                     playing -> (0.5 + baseTempo).coerceIn(0.5, 1.5)
                     else -> 0.0
                 } * ratio

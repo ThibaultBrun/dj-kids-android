@@ -105,10 +105,10 @@ class Deck(
 
     fun setTempo(v: Float) { _tempo.value = v.coerceIn(0f, 1f); engine.setTempo(_tempo.value) }
 
-    /** Jog = vrai scratch : vitesse signée (arrière possible), sans pause. */
+    /** Jog = vrai scratch : vitesse signée (arrière possible), sans pause. Gain élevé = scratch net. */
     fun jogNudge(delta: Float) {
         if (!_loaded.value) return
-        engine.jog(delta.toDouble() * 2.2)
+        engine.jog(delta.toDouble() * 10.0, holdMs = 80)
     }
 
     fun setEqLow(v: Float)  { eqLow.value = v;  engine.setEqLow(v) }
