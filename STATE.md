@@ -44,6 +44,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-10 07:22 : Store listings **it-IT** + **pt-BR** créés (titre/court/long) + publish.py RELEASE_NOTES 6 langues. BUILD SUCCESSFUL 18s.
 - 2026-10-10 07:20 : Store listings **es-ES** + **de-DE** créés (titre/court/long/feature_graphic) + publish.py RELEASE_NOTES 4 langues. Commit c0ba418 pushé. Build précédent : BUILD SUCCESSFUL 18s.
 - 2026-10-10 06:42 : Curriculum : ajout technique **Orbit** (🪐) — chapitre 9, BPM 82, usesCut, "2 clics de crossfader aller-retour". BUILD SUCCESSFUL 18s. Commit 5114d9c pushé.
 - 2026-10-10 06:22 : UX no-audio — `soundsAvailable: StateFlow<Boolean>` exposé dans DjViewModel ; bannière "Mode démo · pas d'audio" dans ChapterPicker quand samples manquants. BUILD SUCCESSFUL 24s. Commit pushé.

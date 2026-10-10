@@ -21,6 +21,8 @@ RELEASE_NOTES = {
     "fr-FR": "Première version — apprenez le scratch sur votre Hercules DJControl Inpulse 200 MK3.",
     "es-ES": "Primera versión — aprende scratch con tu Hercules DJControl Inpulse 200 MK3.",
     "de-DE": "Erste Version — lerne Scratch mit deinem Hercules DJControl Inpulse 200 MK3.",
+    "it-IT": "Prima versione — impara lo scratch con il tuo Hercules DJControl Inpulse 200 MK3.",
+    "pt-BR": "Primeira versão — aprenda scratch com seu Hercules DJControl Inpulse 200 MK3.",
 }
 
 
