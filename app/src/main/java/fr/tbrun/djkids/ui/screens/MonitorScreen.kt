@@ -15,14 +15,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.tbrun.djkids.APP_VERSION
 import fr.tbrun.djkids.ui.DjViewModel
 import fr.tbrun.djkids.ui.theme.TextLo
 
@@ -31,6 +34,7 @@ fun MonitorScreen(vm: DjViewModel) {
     val log by vm.monitor.collectAsStateWithLifecycle()
     val status by vm.midi.status.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
+    val context = LocalContext.current
 
     LaunchedEffect(log.size) {
         if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
@@ -48,6 +52,23 @@ fun MonitorScreen(vm: DjViewModel) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { vm.connect() }) { Text("Connecter") }
             OutlinedButton(onClick = { vm.clearMonitor() }) { Text("Vider") }
+            OutlinedButton(
+                enabled = log.isNotEmpty(),
+                onClick = {
+                    val report = buildString {
+                        appendLine("DJ Kids — relevé MIDI MK3 (v$APP_VERSION)")
+                        appendLine(status)
+                        appendLine("— ${log.size} messages —")
+                        log.forEach { appendLine(it) }
+                    }
+                    val send = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_SUBJECT, "Mapping MIDI Hercules Inpulse 200 MK3")
+                        putExtra(Intent.EXTRA_TEXT, report)
+                    }
+                    context.startActivity(Intent.createChooser(send, "Partager le relevé MIDI"))
+                },
+            ) { Text("Exporter") }
         }
         Spacer(Modifier.height(8.dp))
         HorizontalDivider()
