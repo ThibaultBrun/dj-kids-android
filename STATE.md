@@ -44,9 +44,12 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-11 03:15 : LevelPicker — composable `RhythmPreview` (dots Canvas : gros point = temps fort, petit = subdivision, actif/grisé selon locked) + `docs/privacy.html` (politique de confidentialité prête pour djkids.tbrun.dev/privacy). BUILD SUCCESSFUL 29s. Commit 4233231 pushé.
 - 2026-10-11 02:42 : TrainerScreen UX — BPM affiché à côté du combo pendant la session + arc de vitesse lumineux sur le vinyle (Lime→Pink selon intensité, sens = direction du jog). BUILD SUCCESSFUL 25s. Commit cb3d4c9 pushé sur main.
 - 2026-10-10 22:30 : ScratchPad → disque vinyle Canvas animé (sillons, étiquette Violet, marqueur rotatif LaunchedEffect). Commit 5df3ef1.
 
 ## Prochaine priorité
-- **Phase 4 Oboe** ou **chantier Play Store** (icône + privacy policy `djkids.tbrun.dev/privacy` + release APK). Oboe nécessite NDK/JNI.
-- Trainer UX restant : prévisualisation des techniques (gif/description dans LevelPicker).
+- **Phase 4 Oboe** ou **chantier Play Store** (icône + release APK). Oboe nécessite NDK/JNI.
+- Privacy policy HTML prête dans `docs/privacy.html` → déployer sur djkids.tbrun.dev/privacy (VPS Caddy).
+- Icône + feature graphic : DA soignée, pas générique IA.
+- Trainer UX restant : LevelPicker RhythmPreview ✅ — reste éventuellement une description animée/gif de chaque technique.
