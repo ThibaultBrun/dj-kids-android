@@ -44,6 +44,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-10 06:42 : Curriculum : ajout technique **Orbit** (🪐) — chapitre 9, BPM 82, usesCut, "2 clics de crossfader aller-retour". BUILD SUCCESSFUL 18s. Commit 5114d9c pushé.
 - 2026-10-10 06:22 : UX no-audio — `soundsAvailable: StateFlow<Boolean>` exposé dans DjViewModel ; bannière "Mode démo · pas d'audio" dans ChapterPicker quand samples manquants. BUILD SUCCESSFUL 24s. Commit pushé.
 - 2026-10-10 06:15 : Fix bug Compose : `onTrainerResult` déplacé dans `LaunchedEffect(result)` (ne s'exécute plus à chaque recomposition). ChapterPicker enrichi : badge de progression par technique (N2/5…, ✓ si complété, border Violet→Cyan→Lime). BUILD SUCCESSFUL 23s. Commit 318353b pushé.
 - 2026-10-10 05:42 : README mis à jour (Mode Apprentissage documenté, architecture `game/` ajoutée, prochaine étape Play Store clarifiée). BUILD SUCCESSFUL (précédent build). Commit pushé.
