@@ -25,6 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.tbrun.djkids.ui.DjViewModel
 import fr.tbrun.djkids.ui.screens.DjScreen
@@ -48,6 +50,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+const val APP_VERSION = "0.3.0"
 
 private enum class Tab(val label: String) { DJ("Mix"), LEARN("Scratch"), MAPPING("Mapping"), MONITOR("Monitor") }
 
@@ -83,13 +87,21 @@ private fun AppRoot() {
             }
         }
     ) { inner ->
-        Surface(modifier = Modifier.fillMaxSize().padding(inner)) {
+        androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize().padding(inner)) {
+          androidx.compose.material3.Text(
+              "v$APP_VERSION",
+              color = androidx.compose.ui.graphics.Color(0x66FFFFFF),
+              fontSize = 9.sp,
+              modifier = Modifier.align(androidx.compose.ui.Alignment.TopEnd).padding(4.dp),
+          )
+          Surface(modifier = Modifier.fillMaxSize()) {
             when (Tab.entries[tab]) {
                 Tab.DJ -> DjScreen(vm)
                 Tab.LEARN -> TrainerScreen(vm)
                 Tab.MAPPING -> MappingScreen(vm)
                 Tab.MONITOR -> MonitorScreen(vm)
             }
+          }
         }
     }
 }
