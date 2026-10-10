@@ -1,10 +1,18 @@
 package fr.tbrun.djkids.ui
 
 import android.app.Application
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import fr.tbrun.djkids.audio.DjEngine
+import fr.tbrun.djkids.audio.PcmSample
+import fr.tbrun.djkids.audio.ScratchEngine
+import fr.tbrun.djkids.audio.SoundBank
+import fr.tbrun.djkids.game.Curriculum
+import fr.tbrun.djkids.game.Level
+import fr.tbrun.djkids.game.Technique
+import fr.tbrun.djkids.game.TrainerEngine
 import fr.tbrun.djkids.midi.Binding
 import fr.tbrun.djkids.midi.ControlFunction
 import fr.tbrun.djkids.midi.MidiEngine
@@ -23,6 +31,13 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     val midi = MidiEngine(app)
     val mapping = MidiMapping(app)
     val engine = DjEngine(app, viewModelScope)
+
+    // --- Mode apprentissage du scratch ---
+    val scratch = ScratchEngine()
+    val trainer = TrainerEngine(viewModelScope)
+    private val prefs = app.getSharedPreferences("dj_progress", Context.MODE_PRIVATE)
+    private var scratchSampleLoaded = false
+    private var trainerActive = false
 
     private val _monitor = MutableStateFlow<List<String>>(emptyList())
     val monitor: StateFlow<List<String>> = _monitor
@@ -77,8 +92,62 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     // --- Chargement de morceaux ---
     fun loadTrack(deck: DeckId, uri: Uri, title: String) = engine.loadTrack(deck, uri, title)
 
+    // --- Mode apprentissage ---
+    private fun ensureSamples() {
+        if (scratchSampleLoaded) return
+        val ctx = getApplication<Application>()
+        scratch.setScratchSample(PcmSample.fromAsset(ctx, SoundBank.defaultScratch.file))
+        scratch.setBreak(PcmSample.fromAsset(ctx, SoundBank.defaultBreak.file))
+        scratchSampleLoaded = true
+    }
+
+    /** Niveau débloqué le plus haut pour une technique (1 par défaut). */
+    fun unlockedLevel(techId: String): Int = prefs.getInt("unlock_$techId", 1)
+
+    private fun unlock(techId: String, levelIndex: Int) {
+        if (levelIndex > unlockedLevel(techId)) prefs.edit().putInt("unlock_$techId", levelIndex).apply()
+    }
+
+    /** Prépare un niveau : charge le pattern + cale le break au bon tempo. */
+    fun trainerSelect(technique: Technique, level: Level) {
+        ensureSamples()
+        trainer.load(level)
+        scratch.setBreakBpm(SoundBank.defaultBreak.bpm, level.bpm)
+    }
+
+    fun trainerStart() {
+        ensureSamples()
+        scratch.start()
+        scratch.setBreakPlaying(true)
+        trainerActive = true
+        trainer.start()
+    }
+
+    fun trainerStop() {
+        trainer.stop()
+        scratch.setBreakPlaying(false)
+        scratch.setScratchSpeed(0.0)
+        scratch.stop()
+        trainerActive = false
+    }
+
+    /** Le jog/tactile pilote la vitesse de scratch (en frames sample / frame sortie). */
+    fun scratchScrub(speed: Double) = scratch.setScratchSpeed(speed)
+
+    /** Un aller-retour détecté = une attaque de scratch à scorer. */
+    fun scratchStroke() {
+        scratch.pluck()
+        trainer.registerScratch()
+    }
+
+    /** À appeler quand un résultat tombe pour persister la progression. */
+    fun onTrainerResult(techId: String, levelIndex: Int) {
+        if (trainer.result.value?.passed == true) unlock(techId, levelIndex + 1)
+    }
+
     override fun onCleared() {
         engine.release()
+        if (trainerActive) scratch.stop()
         midi.disconnect()
         super.onCleared()
     }

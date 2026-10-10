@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material3.Icon
@@ -29,6 +30,7 @@ import fr.tbrun.djkids.ui.DjViewModel
 import fr.tbrun.djkids.ui.screens.DjScreen
 import fr.tbrun.djkids.ui.screens.MappingScreen
 import fr.tbrun.djkids.ui.screens.MonitorScreen
+import fr.tbrun.djkids.ui.screens.TrainerScreen
 import fr.tbrun.djkids.ui.theme.DJKidsTheme
 
 class MainActivity : ComponentActivity() {
@@ -47,7 +49,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Tab(val label: String) { DJ("Mix"), MAPPING("Mapping"), MONITOR("Monitor") }
+private enum class Tab(val label: String) { DJ("Mix"), LEARN("Scratch"), MAPPING("Mapping"), MONITOR("Monitor") }
 
 @Composable
 private fun AppRoot() {
@@ -68,6 +70,7 @@ private fun AppRoot() {
                             Icon(
                                 when (t) {
                                     Tab.DJ -> Icons.Filled.Album
+                                    Tab.LEARN -> Icons.Filled.School
                                     Tab.MAPPING -> Icons.Filled.Settings
                                     Tab.MONITOR -> Icons.Filled.Timeline
                                 },
@@ -83,6 +86,7 @@ private fun AppRoot() {
         Surface(modifier = Modifier.fillMaxSize().padding(inner)) {
             when (Tab.entries[tab]) {
                 Tab.DJ -> DjScreen(vm)
+                Tab.LEARN -> TrainerScreen(vm)
                 Tab.MAPPING -> MappingScreen(vm)
                 Tab.MONITOR -> MonitorScreen(vm)
             }
