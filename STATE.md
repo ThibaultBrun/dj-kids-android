@@ -44,5 +44,9 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
-- 2026-10-10 23:42 : assets audio ajoutés — 8 WAV synthétiques CC0 générés par Python (3 breakbeats 70/85/90 BPM, 3 scratch vocaux Ahh/Fresh/Aah yeah, 2 FX airhorn/rewind). BUILD SUCCESSFUL 12s. Commit 8e74b22 pushé sur main.
-- Prochaine priorité : intégrer ScratchEngine dans TrainerScreen (charger les WAV via PcmSample.fromAsset, démarrer engine, piloter scratchSpeed depuis le drag jog) + tester la boucle breakbeat en arrière-plan pendant le scoring.
+- 2026-10-10 22:30 : ScratchPad → disque vinyle Canvas animé (sillons, étiquette Violet, marqueur rotatif LaunchedEffect). Count-in affiche "4 3 2 1" en Amber pendant positionBeat < 0. BUILD SUCCESSFUL 23s. Commit 5df3ef1 pushé sur main.
+- Note : ScratchEngine était déjà intégré dans DjViewModel (trainerStart/stop, scratchScrub, scratchStroke) — la tâche "intégrer ScratchEngine" est donc DONE.
+
+## Prochaine priorité
+- **Phase 4 Oboe** ou **chantier Play Store** (icône + privacy policy + release APK). Oboe nécessite NDK/JNI. Play Store = contenu/graphisme à produire.
+- Sans hardware MK3 : continuer sur le trainer UX (feedback visuel vitesse en temps réel, BPM affiché, prévisualisation des techniques).

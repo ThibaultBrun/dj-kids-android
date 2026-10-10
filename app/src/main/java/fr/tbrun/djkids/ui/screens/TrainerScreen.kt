@@ -181,7 +181,12 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
             }
         }
 
-        // Platine tactile à scratcher (vinyle animé)
+        Text(
+            "Scratche avec le jog de la platine 🎛️ ou au doigt 👇",
+            color = TextLo, fontSize = 11.sp,
+            modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
+        )
+        // Platine à scratcher : jog MK3 (via MIDI) ou tactile (vinyle animé)
         ScratchPad(
             enabled = running,
             onScrub = { vm.scratchScrub(it) },

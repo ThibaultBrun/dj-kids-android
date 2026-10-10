@@ -15,16 +15,22 @@ import fr.tbrun.djkids.game.Technique
 import fr.tbrun.djkids.game.TrainerEngine
 import fr.tbrun.djkids.midi.Binding
 import fr.tbrun.djkids.midi.ControlFunction
+import fr.tbrun.djkids.midi.MidiAction
 import fr.tbrun.djkids.midi.MidiEngine
 import fr.tbrun.djkids.midi.MidiMapping
 import fr.tbrun.djkids.midi.MidiMessage
 import fr.tbrun.djkids.model.DeckId
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /** Cible de MIDI learn : la fonction qu'on veut associer au prochain contrôle pressé. */
 data class LearnTarget(val fn: ControlFunction, val deck: DeckId?, val pad: Int = -1)
+
+/** Gain appliqué au delta du jog MK3 pour obtenir une vitesse de scratch au ressenti naturel. */
+private const val SCRATCH_JOG_GAIN = 7.0
 
 class DjViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -38,6 +44,11 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     private val prefs = app.getSharedPreferences("dj_progress", Context.MODE_PRIVATE)
     private var scratchSampleLoaded = false
     private var trainerActive = false
+
+    // Pilotage du scratch par le vrai jog de la MK3 (en plus du tactile).
+    private var jogSign = 0
+    @Volatile private var lastJogMs = 0L
+    private var jogWatchdog: Job? = null
 
     private val _monitor = MutableStateFlow<List<String>>(emptyList())
     val monitor: StateFlow<List<String>> = _monitor
@@ -69,7 +80,26 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
             }
             return
         }
-        engine.apply(mapping.resolve(msg))
+        val action = mapping.resolve(msg)
+        // En mode apprentissage, le jog de la platine pilote le scratch (pas les platines DJ).
+        if (trainerActive && action is MidiAction.Jog) {
+            onTrainerJog(action.delta)
+            return
+        }
+        engine.apply(action)
+    }
+
+    /** Un mouvement de jog MK3 pendant le trainer : pilote la vitesse de scratch + score les allers-retours. */
+    private fun onTrainerJog(delta: Float) {
+        lastJogMs = System.currentTimeMillis()
+        scratch.setScratchSpeed(delta.toDouble() * SCRATCH_JOG_GAIN)
+        val s = if (delta > 0.01f) 1 else if (delta < -0.01f) -1 else 0
+        if (s != 0 && jogSign != 0 && s != jogSign) {
+            // Changement de direction = un aller-retour terminé = une attaque à scorer.
+            scratch.pluck()
+            trainer.registerScratch()
+        }
+        if (s != 0) jogSign = s
     }
 
     // --- MIDI ---
@@ -120,11 +150,25 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
         scratch.start()
         scratch.setBreakPlaying(true)
         trainerActive = true
+        jogSign = 0
         trainer.start()
+        // Le jog MK3 n'émet que pendant le mouvement : si plus rien n'arrive, on fige le scratch.
+        jogWatchdog?.cancel()
+        jogWatchdog = viewModelScope.launch {
+            while (trainerActive) {
+                if (System.currentTimeMillis() - lastJogMs > 40) {
+                    scratch.setScratchSpeed(0.0)
+                    jogSign = 0
+                }
+                delay(20)
+            }
+        }
     }
 
     fun trainerStop() {
         trainer.stop()
+        jogWatchdog?.cancel()
+        jogWatchdog = null
         scratch.setBreakPlaying(false)
         scratch.setScratchSpeed(0.0)
         scratch.stop()
