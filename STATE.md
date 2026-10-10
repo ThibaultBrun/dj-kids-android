@@ -57,6 +57,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 - 2026-10-10 03:55 : `TechniqueAnimation` ajoutée dans LevelPicker — Canvas animé 68dp : jog → vinyle + flèche directionnelle Cyan/Pink pulsante ; cut → crossfader + ondes Violet. BUILD SUCCESSFUL 21s. Commit 7d53382 pushé.
 - 2026-10-11 03:25 : Keystore release généré (`~/djkids-release.jks`) + AAB signé 13Mo (`bundleRelease` BUILD SUCCESSFUL 1m50s). Privacy policy déployée sur https://djkids.tbrun.dev/privacy (Caddy + DNS OK).
 - 2026-10-11 03:15 : LevelPicker — composable `RhythmPreview` (dots Canvas : gros point = temps fort, petit = subdivision, actif/grisé selon locked) + `docs/privacy.html` (politique de confidentialité prête pour djkids.tbrun.dev/privacy). BUILD SUCCESSFUL 29s. Commit 4233231 pushé.
+- 2026-10-10 09:42 : TrainerScreen polish — barre progression globale (X/Y niv · Z/9 tech + LinearProgressIndicator Lime) dans ChapterPicker ; étoiles ☆→⭐⭐⭐ dans ResultDialog (seuils 70/85/95 %) + objectif affiché si échec. BUILD SUCCESSFUL 24s. Commit 96bb7c1 pushé.
 - 2026-10-11 02:42 : TrainerScreen UX — BPM affiché à côté du combo pendant la session + arc de vitesse lumineux sur le vinyle (Lime→Pink selon intensité, sens = direction du jog). BUILD SUCCESSFUL 25s. Commit cb3d4c9 pushé sur main.
 - 2026-10-10 22:30 : ScratchPad → disque vinyle Canvas animé (sillons, étiquette Violet, marqueur rotatif LaunchedEffect). Commit 5df3ef1.
 
