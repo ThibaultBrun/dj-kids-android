@@ -355,7 +355,7 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
             Column(Modifier.weight(1f)) {
                 Text(
                     if (tech.usesCut) "Coupe sur le rythme avec le CROSSFADER de la MK3"
-                    else "Scratche avec le JOG de la MK3 sur chaque note",
+                    else "↑ pousse le jog · ↓ tire le jog — un coup par flèche, sur le rythme",
                     color = TextLo, fontSize = 11.sp,
                 )
                 if (tech.usesCut) {
@@ -406,20 +406,30 @@ private fun NoteHighway(beats: List<Pair<Double, NoteValue>>, position: Double, 
             if (x in 0f..w) drawLine(Color(0xFF2A2A38), Offset(x, 0f), Offset(x, h), strokeWidth = 1f)
             b += 1.0
         }
-        // Hits
-        for ((beat, value) in beats) {
-            if (beat < position - lookBack || beat > position + lookAhead) continue
+        // Deux voies : flèche HAUT = pousse le son (avant), flèche BAS = tire (arrière).
+        drawLine(Color(0xFF2A2A38), Offset(0f, h / 2), Offset(w, h / 2), strokeWidth = 1f)
+        beats.forEachIndexed { idx, (beat, value) ->
+            if (beat < position - lookBack || beat > position + lookAhead) return@forEachIndexed
             val x = nowX + ((beat - position) / span).toFloat() * w
-            val radius = when (value) {
-                NoteValue.QUARTER -> h * 0.22f
-                NoteValue.EIGHTH -> h * 0.17f
-                NoteValue.SIXTEENTH -> h * 0.12f
+            val up = idx % 2 == 0                 // on alterne : pousse / tire
+            val size = when (value) {
+                NoteValue.QUARTER -> h * 0.26f
+                NoteValue.EIGHTH -> h * 0.20f
+                NoteValue.SIXTEENTH -> h * 0.15f
             }
-            val color = when (value) {
-                NoteValue.QUARTER -> Cyan; NoteValue.EIGHTH -> Amber; NoteValue.SIXTEENTH -> Pink
+            val near = abs(beat - position) < 0.12
+            val col = if (near) Lime else if (up) Cyan else Pink
+            // Flèche (triangle) dans la demi-voie correspondante.
+            val cy = if (up) h * 0.30f else h * 0.70f
+            val tip = if (up) cy - size else cy + size
+            val baseY = if (up) cy + size * 0.5f else cy - size * 0.5f
+            val path = androidx.compose.ui.graphics.Path().apply {
+                moveTo(x, tip)
+                lineTo(x - size * 0.7f, baseY)
+                lineTo(x + size * 0.7f, baseY)
+                close()
             }
-            val hit = abs(beat - position) < 0.12
-            drawCircle(if (hit) Lime else color, radius, Offset(x, h / 2))
+            drawPath(path, col)
         }
     }
 }

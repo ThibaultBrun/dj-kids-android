@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-const val APP_VERSION = "1.5.0"
+const val APP_VERSION = "1.6.0"
 
 private enum class Tab(val label: String) { DJ("Mix"), LEARN("Scratch"), MAPPING("Mapping"), MONITOR("Monitor") }
 

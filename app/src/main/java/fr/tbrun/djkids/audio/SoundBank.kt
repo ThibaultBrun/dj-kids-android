@@ -36,16 +36,15 @@ object SoundBank {
         SoundSample("bb_urtime", "Is It Ur Time", SoundCategory.BREAKBEAT, "sounds/breakbeat/break5.mp3", credit = "CC0 Soulja Unit"),
     )
 
-    // Scratch = VOIX BRUTES (one-shots) à scratcher soi-même avec le jog.
+    // Scratch = VOIX BRUTES (one-shots) à scratcher soi-même avec le jog. CC0 Freesound (mieux notées).
     val scratches: List<SoundSample> = listOf(
-        SoundSample("scr_woohoo", "Woo Hoo", SoundCategory.SCRATCH, "sounds/scratch/scratch1.mp3", credit = "CC0 Freesound"),
-        SoundSample("scr_woo", "Woo", SoundCategory.SCRATCH, "sounds/scratch/scratch2.mp3", credit = "CC0 Freesound"),
-        SoundSample("scr_woo2", "Woo 2", SoundCategory.SCRATCH, "sounds/scratch/scratch3.mp3", credit = "CC0 Freesound"),
-        SoundSample("scr_yeah", "Yeah !", SoundCategory.SCRATCH, "sounds/scratch/scratch4.mp3", credit = "CC0 Freesound"),
-        SoundSample("scr_hey", "Hey", SoundCategory.SCRATCH, "sounds/scratch/scratch5.mp3", credit = "CC0 Freesound"),
-        SoundSample("scr_hey_grp", "Hey (groupe)", SoundCategory.SCRATCH, "sounds/scratch/scratch6.mp3", credit = "CC0 Freesound"),
-        SoundSample("scr_hey_f", "Hey (voix f.)", SoundCategory.SCRATCH, "sounds/scratch/scratch7.mp3", credit = "CC0 Freesound"),
-        SoundSample("scr_hey_f2", "Hey 2", SoundCategory.SCRATCH, "sounds/scratch/scratch8.mp3", credit = "CC0 Freesound"),
+        SoundSample("scr_sample", "Scratch sample", SoundCategory.SCRATCH, "sounds/scratch/scratch4.ogg", credit = "CC0 Freesound"),
+        SoundSample("scr_yeah", "Yeah !", SoundCategory.SCRATCH, "sounds/scratch/scratch1.ogg", credit = "CC0 Freesound"),
+        SoundSample("scr_ahyeah", "Ah Yeah", SoundCategory.SCRATCH, "sounds/scratch/scratch6.ogg", credit = "CC0 Freesound"),
+        SoundSample("scr_awyeah", "Aw Yeah", SoundCategory.SCRATCH, "sounds/scratch/scratch7.ogg", credit = "CC0 Freesound"),
+        SoundSample("scr_hey_grp", "Hey (groupe)", SoundCategory.SCRATCH, "sounds/scratch/scratch2.ogg", credit = "CC0 Freesound"),
+        SoundSample("scr_hey_low", "Hey grave", SoundCategory.SCRATCH, "sounds/scratch/scratch3.ogg", credit = "CC0 Freesound"),
+        SoundSample("scr_chop", "Vocal chop", SoundCategory.SCRATCH, "sounds/scratch/scratch5.ogg", credit = "CC0 Freesound"),
     )
 
     val fx: List<SoundSample> = listOf(
