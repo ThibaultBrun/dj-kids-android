@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -295,6 +296,7 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
     val running by vm.trainer.running.collectAsStateWithLifecycle()
     val lastJudgement by vm.trainer.lastJudgement.collectAsStateWithLifecycle()
     val result by vm.trainer.result.collectAsStateWithLifecycle()
+    val connected by vm.midi.connected.collectAsStateWithLifecycle()
 
     val pattern = remember(lvl.index, tech.id) { vm.trainer.currentPattern() }
 
@@ -304,66 +306,69 @@ private fun PlayView(vm: DjViewModel, tech: Technique, lvl: Level, onQuit: () ->
             OutlinedButton(onClick = onQuit) { Text("Quitter") }
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("Combo x$combo", color = Amber, fontSize = 13.sp)
-            Text("·", color = TextLo, fontSize = 13.sp)
-            Text("${lvl.bpm} BPM", color = Cyan, fontSize = 13.sp)
+            // État du contrôleur : l'instrument, c'est la MK3.
+            Text(
+                if (connected) "🎛️ MK3 connectée" else "🎛️ branche la MK3",
+                color = if (connected) Lime else Amber, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+            )
+            Text("·", color = TextLo, fontSize = 12.sp)
+            Text("Combo x$combo", color = Amber, fontSize = 12.sp)
+            Text("·", color = TextLo, fontSize = 12.sp)
+            Text("${lvl.bpm} BPM", color = Cyan, fontSize = 12.sp)
         }
 
-        // Autoroute de notes
-        NoteHighway(
-            beats = pattern?.hits?.map { it.beat to it.value } ?: emptyList(),
-            position = positionBeat,
-            modifier = Modifier.fillMaxWidth().height(120.dp).padding(vertical = 10.dp),
-        )
-
-        // Compte à rebours pendant le count-in (positionBeat < 0)
-        if (running && positionBeat < 0) {
-            val countBeat = ((-positionBeat).toInt() + 1).coerceIn(1, 4)
-            Box(Modifier.fillMaxWidth().height(36.dp), contentAlignment = Alignment.Center) {
-                Text("$countBeat", color = Amber, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+        // HÉROS = l'autoroute rythmique : ce que l'élève lit pour scratcher au bon moment sur la MK3.
+        Box(Modifier.fillMaxWidth().weight(1f, fill = true).padding(vertical = 8.dp)) {
+            NoteHighway(
+                beats = pattern?.hits?.map { it.beat to it.value } ?: emptyList(),
+                position = positionBeat,
+                modifier = Modifier.fillMaxSize(),
+            )
+            // Compte à rebours / jugement en superposition.
+            if (running && positionBeat < 0) {
+                val countBeat = ((-positionBeat).toInt() + 1).coerceIn(1, 4)
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("$countBeat", color = Amber, fontWeight = FontWeight.Bold, fontSize = 40.sp)
+                }
             }
-        } else {
-            // Feedback de jugement
-            Box(Modifier.fillMaxWidth().height(36.dp), contentAlignment = Alignment.Center) {
-                lastJudgement?.let {
+            lastJudgement?.let {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                     Text(it.label, color = when (it) {
                         Judgement.PERFECT -> Lime; Judgement.GOOD -> Cyan; Judgement.OK -> Amber; Judgement.MISS -> Pink
-                    }, fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                    }, fontWeight = FontWeight.Bold, fontSize = 22.sp, modifier = Modifier.padding(top = 4.dp))
                 }
             }
         }
 
-        Text(
-            if (tech.usesCut) "Fais tourner le son et coupe sur le rythme : crossfader de la platine 🎛️ ou bouton CUT 👇"
-            else "Scratche avec le jog de la platine 🎛️ ou au doigt 👇",
-            color = TextLo, fontSize = 11.sp,
-            modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
-        )
-        // Platine à scratcher : prend l'espace restant, dimensionnée par la hauteur (OK paysage + portrait).
-        Box(
-            Modifier.fillMaxWidth().weight(1f, fill = true),
-            contentAlignment = Alignment.Center,
+        // Rangée du bas : petit indicateur de jog (reflète la MK3, tactile en secours) + action.
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             ScratchPad(
                 enabled = running,
                 onScrub = { vm.scratchScrub(it) },
                 onStroke = { vm.scratchStroke() },
-                modifier = Modifier.fillMaxHeight().aspectRatio(1f).padding(6.dp),
+                modifier = Modifier.size(84.dp),
             )
-        }
-
-        // Boutons toujours visibles en bas.
-        if (tech.usesCut) {
-            Button(
-                onClick = { vm.trainerCutTap() },
-                enabled = running,
-                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
-            ) { Text("✂️  CUT") }
-        }
-
-        if (!running && result == null) {
-            Button(onClick = { vm.trainerStart() }, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
-                Text("▶  Go !")
+            Column(Modifier.weight(1f)) {
+                Text(
+                    if (tech.usesCut) "Coupe sur le rythme avec le CROSSFADER de la MK3"
+                    else "Scratche avec le JOG de la MK3 sur chaque note",
+                    color = TextLo, fontSize = 11.sp,
+                )
+                if (tech.usesCut) {
+                    Button(
+                        onClick = { vm.trainerCutTap() }, enabled = running,
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                    ) { Text("✂️  CUT (secours)") }
+                }
+                if (!running && result == null) {
+                    Button(onClick = { vm.trainerStart() }, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+                        Text("▶  Go !")
+                    }
+                }
             }
         }
     }
