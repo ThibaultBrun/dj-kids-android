@@ -44,9 +44,9 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
-- 2026-10-10 22:30 : ScratchPad → disque vinyle Canvas animé (sillons, étiquette Violet, marqueur rotatif LaunchedEffect). Count-in affiche "4 3 2 1" en Amber pendant positionBeat < 0. BUILD SUCCESSFUL 23s. Commit 5df3ef1 pushé sur main.
-- Note : ScratchEngine était déjà intégré dans DjViewModel (trainerStart/stop, scratchScrub, scratchStroke) — la tâche "intégrer ScratchEngine" est donc DONE.
+- 2026-10-11 02:42 : TrainerScreen UX — BPM affiché à côté du combo pendant la session + arc de vitesse lumineux sur le vinyle (Lime→Pink selon intensité, sens = direction du jog). BUILD SUCCESSFUL 25s. Commit cb3d4c9 pushé sur main.
+- 2026-10-10 22:30 : ScratchPad → disque vinyle Canvas animé (sillons, étiquette Violet, marqueur rotatif LaunchedEffect). Commit 5df3ef1.
 
 ## Prochaine priorité
-- **Phase 4 Oboe** ou **chantier Play Store** (icône + privacy policy + release APK). Oboe nécessite NDK/JNI. Play Store = contenu/graphisme à produire.
-- Sans hardware MK3 : continuer sur le trainer UX (feedback visuel vitesse en temps réel, BPM affiché, prévisualisation des techniques).
+- **Phase 4 Oboe** ou **chantier Play Store** (icône + privacy policy `djkids.tbrun.dev/privacy` + release APK). Oboe nécessite NDK/JNI.
+- Trainer UX restant : prévisualisation des techniques (gif/description dans LevelPicker).
