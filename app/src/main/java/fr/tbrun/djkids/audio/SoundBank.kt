@@ -26,21 +26,27 @@ data class SoundSample(
 
 object SoundBank {
 
+    // Vrais samples CC0 (Freesound). Détail licences/auteurs : assets/sounds/CREDITS.md.
     val breakbeats: List<SoundSample> = listOf(
-        SoundSample("break_amen_slow", "Break lent", SoundCategory.BREAKBEAT, "sounds/breakbeat/amen_slow.wav", bpm = 70, loop = true),
-        SoundSample("break_funky", "Funky break", SoundCategory.BREAKBEAT, "sounds/breakbeat/funky.wav", bpm = 90, loop = true),
-        SoundSample("break_boombap", "Boom bap", SoundCategory.BREAKBEAT, "sounds/breakbeat/boombap.wav", bpm = 85, loop = true),
+        SoundSample("break_driver", "Driver break", SoundCategory.BREAKBEAT, "sounds/breakbeat/break4.wav", loop = true, credit = "CC0 vekoN"),
+        SoundSample("break_silly1", "Silly break 1", SoundCategory.BREAKBEAT, "sounds/breakbeat/break1.wav", loop = true, credit = "CC0 RutgerMuller"),
+        SoundSample("break_silly2", "Silly break 2", SoundCategory.BREAKBEAT, "sounds/breakbeat/break2.wav", loop = true, credit = "CC0 RutgerMuller"),
+        SoundSample("break_crunchy", "Crunchy break", SoundCategory.BREAKBEAT, "sounds/breakbeat/break3.wav", bpm = 164, loop = true, credit = "CC0 deadrobotmusic"),
     )
 
     val scratches: List<SoundSample> = listOf(
-        SoundSample("scr_ahh", "Ahh", SoundCategory.SCRATCH, "sounds/scratch/ahh.wav"),
-        SoundSample("scr_fresh", "Fresh", SoundCategory.SCRATCH, "sounds/scratch/fresh.wav"),
-        SoundSample("scr_aah_yeah", "Aah yeah", SoundCategory.SCRATCH, "sounds/scratch/aah_yeah.wav"),
+        SoundSample("scr_transform1", "Transform 1", SoundCategory.SCRATCH, "sounds/scratch/scratch1.wav", credit = "CC0 G_M_D_THREE"),
+        SoundSample("scr_transform2", "Transform 2", SoundCategory.SCRATCH, "sounds/scratch/scratch2.wav", credit = "CC0 G_M_D_THREE"),
+        SoundSample("scr_backdrag1", "Back drag 1", SoundCategory.SCRATCH, "sounds/scratch/scratch3.wav", credit = "CC0 G_M_D_THREE"),
+        SoundSample("scr_transform3", "Transform 3", SoundCategory.SCRATCH, "sounds/scratch/scratch4.wav", credit = "CC0 G_M_D_THREE"),
+        SoundSample("scr_backdrag2", "Back drag 2", SoundCategory.SCRATCH, "sounds/scratch/scratch5.wav", credit = "CC0 G_M_D_THREE"),
+        SoundSample("scr_rumble", "Rumble", SoundCategory.SCRATCH, "sounds/scratch/scratch6.wav", credit = "CC0 PuzzleAndy"),
     )
 
     val fx: List<SoundSample> = listOf(
-        SoundSample("fx_airhorn", "Corne de brume", SoundCategory.FX, "sounds/fx/airhorn.wav"),
-        SoundSample("fx_rewind", "Rewind", SoundCategory.FX, "sounds/fx/rewind.wav"),
+        SoundSample("fx_airhorn", "Air horn", SoundCategory.FX, "sounds/fx/fx1.wav", credit = "CC0 mcpable"),
+        SoundSample("fx_horn_bike", "Klaxon", SoundCategory.FX, "sounds/fx/fx2.wav", credit = "CC0 loganzsound"),
+        SoundSample("fx_airhorn2", "Air horn 2", SoundCategory.FX, "sounds/fx/fx3.wav", credit = "CC0 jacksonacademyashmore"),
     )
 
     val all: List<SoundSample> get() = breakbeats + scratches + fx
@@ -50,6 +56,6 @@ object SoundBank {
     /** Breakbeat par défaut pour le trainer de scratch. */
     val defaultBreak: SoundSample get() = breakbeats.first()
 
-    /** Sample de scratch par défaut (vocal "Ahh" = le son canonique du baby scratch). */
+    /** Sample de scratch par défaut pour le trainer. */
     val defaultScratch: SoundSample get() = scratches.first()
 }
