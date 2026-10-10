@@ -44,6 +44,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-10 05:42 : README mis à jour (Mode Apprentissage documenté, architecture `game/` ajoutée, prochaine étape Play Store clarifiée). BUILD SUCCESSFUL (précédent build). Commit pushé.
 - 2026-10-10 05:10 : Feature graphic 1024×500 créé (SVG → PNG via Chromium headless) + icône tonearm améliorée (bras de lecture + pivot + cartridge rose, sillons multiples). BUILD SUCCESSFUL 15s. Commit dc8bcf8 pushé. Prochaine étape bloquée : création manuelle de l'app en Play Console par Thibault.
 - 2026-10-10 04:42 : Play Store API testée → `fr.tbrun.djkids` n'existe pas encore en Play Console (**création manuelle requise**). Script `scripts/publish.py` créé + métadonnées store (`store/en-US/` et `store/fr-FR/` : title, short_description, full_description). Pas de build lancé (gradle propre, disque 96%).
 - 2026-10-10 03:55 : `TechniqueAnimation` ajoutée dans LevelPicker — Canvas animé 68dp : jog → vinyle + flèche directionnelle Cyan/Pink pulsante ; cut → crossfader + ondes Violet. BUILD SUCCESSFUL 21s. Commit 7d53382 pushé.
