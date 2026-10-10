@@ -24,6 +24,7 @@ enum class ControlFunction(val label: String, val continuous: Boolean, val perDe
     EQ_HIGH("EQ Aigu", true, true),
     FILTER("Filtre", true, true),
     JOG("Jog (nudge / scratch)", true, true),
+    JOG_TOUCH("Contact jog", false, true),
 
     // Pads par platine (num = index 0..7 via param)
     PAD("Pad (hot cue / sample)", false, true),

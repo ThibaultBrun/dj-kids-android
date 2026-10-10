@@ -21,10 +21,12 @@ class ScratchDeckEngine(private val outRate: Int = 48000) {
     @Volatile private var baseTempo = 0.5f         // 0.5 = vitesse normale
     @Volatile private var loop = false
 
-    // Scratch (jog) : modèle physique "vinyle" piloté par ticks (standard Mixxx).
-    // Le jog MK3 envoie ±1 par message ; la vitesse vient de la fréquence des ticks.
-    @Volatile private var scratchTarget = 0.0   // position cible (frames) alimentée par les ticks
-    @Volatile private var scratchUntilMs = 0L
+    // Scratch (jog) : modèle vinyle à VÉLOCITÉ CONTINUE (évite le son haché entre deux ticks).
+    // Le jog MK3 envoie ±1 par message ; la vitesse vient de la cadence des ticks.
+    @Volatile private var scratchVel = 0.0      // frames source / frame de sortie
+    @Volatile private var touchHeld = false     // doigt sur le jog (contact), prime sur le timeout
+    @Volatile private var scratchUntilMs = 0L   // filet de sécurité si le contact n'est pas câblé
+    @Volatile private var lastTickNanos = 0L
     private val ticksPerRev = 248.0
     private val vinylRpm = 33.0 + 1.0 / 3.0
     /** frames audio par tick de jog → à la vitesse naturelle du vinyle, lecture = 1×. */
@@ -50,20 +52,31 @@ class ScratchDeckEngine(private val outRate: Int = 48000) {
     fun positionFrame(): Double = playhead
     fun isPlaying(): Boolean = playing
 
-    fun setTrack(s: PcmSample?) { track = s; playhead = 0.0; scratchTarget = 0.0; onEqChanged() }
+    fun setTrack(s: PcmSample?) { track = s; playhead = 0.0; scratchVel = 0.0; onEqChanged() }
     fun setLoop(v: Boolean) { loop = v }
     fun play() { playing = true }
     fun pause() { playing = false }
     fun togglePlay() { playing = !playing }
-    fun seekToFrame(f: Double) { playhead = f.coerceIn(0.0, (frames - 1).coerceAtLeast(0).toDouble()); scratchTarget = playhead }
+    fun seekToFrame(f: Double) { playhead = f.coerceIn(0.0, (frames - 1).coerceAtLeast(0).toDouble()) }
+
+    /** Contact du jog (doigt posé). Pendant le contact = scratch ; au relâcher = reprise immédiate. */
+    fun setScratching(on: Boolean) {
+        touchHeld = on
+        if (on) { scratchVel = 0.0; lastTickNanos = System.nanoTime() }
+    }
     fun setTempo(v: Float) { baseTempo = v.coerceIn(0f, 1f) }
 
-    /** Un tick de jog (±1). On avance la cible de scratch d'un "pas vinyle" ; la vitesse = cadence des ticks. */
-    fun jogTick(dir: Int, holdMs: Long = 260) {
-        val now = System.currentTimeMillis()
-        if (now >= scratchUntilMs) scratchTarget = playhead // (ré)entrée en scratch : on recale sur la tête
-        scratchTarget += dir.coerceIn(-1, 1) * framesPerTick()
-        scratchUntilMs = now + holdMs
+    /** Un tick de jog (±1). Vitesse = framesParTick / temps écoulé depuis le tick précédent. */
+    fun jogTick(dir: Int, holdMs: Long = 140) {
+        val nowN = System.nanoTime()
+        val dt = (nowN - lastTickNanos) / 1e9
+        lastTickNanos = nowN
+        val d = if (dir >= 0) 1 else -1
+        val fpt = framesPerTick()
+        // frames source par frame de sortie ; dt borné pour éviter les sauts.
+        val inst = d * fpt / (dt.coerceIn(0.002, 0.3) * outRate)
+        scratchVel = scratchVel * 0.4 + inst * 0.6
+        scratchUntilMs = System.currentTimeMillis() + holdMs
     }
 
     fun setChannelVolume(v: Float) { channelVol = v.coerceIn(0f, 1f) }
@@ -113,35 +126,29 @@ class ScratchDeckEngine(private val outRate: Int = 48000) {
         if (eqDirty) recomputeEq()
         val ratio = (s?.sampleRate ?: outRate).toDouble() / outRate
         val now = System.currentTimeMillis()
-        val scratching = now < scratchUntilMs
+        val scratching = touchHeld || now < scratchUntilMs
         val data = s?.data
         val len = data?.size ?: 0
-        val maxStep = ratio * 30.0 // borne de pitch (~30x) pour éviter les clics
+        val maxV = ratio * 24.0
+        // Si plus de tick récent, on freine la "platine" (comme un vinyle qui ralentit).
+        if (scratching && (System.nanoTime() - lastTickNanos) > 28_000_000L) scratchVel *= 0.55
+        var vel = scratchVel.coerceIn(-maxV, maxV)
         for (i in 0 until n) {
             var v = 0f
             if (data != null && len > 1) {
-                var moved = false
-                if (scratching) {
-                    // La tête poursuit la cible alimentée par les ticks (filtre type alpha-bêta).
-                    var step = (scratchTarget - playhead) * 0.08
-                    if (step > maxStep) step = maxStep else if (step < -maxStep) step = -maxStep
-                    if (step > 1e-4 || step < -1e-4) { playhead += step; moved = true }
-                } else if (playing) {
-                    playhead += (0.5 + baseTempo).coerceIn(0.5, 1.5) * ratio
-                    scratchTarget = playhead
-                    moved = true
-                }
-                if (moved) {
-                    val x = sampleAt(data, playhead)
-                    val y = sH.process(sM.process(sL.process(x, low), mid), high)
-                    v = y * channelVol * crossGain * masterGain
-                    if (playhead >= len - 1) { if (loop) { playhead -= (len - 1); scratchTarget -= (len - 1) } else { playhead = (len - 1).toDouble(); if (!scratching) playing = false } }
-                    if (playhead < 0) { if (loop) { playhead += (len - 1); scratchTarget += (len - 1) } else playhead = 0.0 }
-                }
+                val speed = if (scratching) vel else if (playing) (0.5 + baseTempo).coerceIn(0.5, 1.5) * ratio else 0.0
+                // Toujours échantillonner à la position courante (pas de silence entre ticks → plus de grésillement).
+                val x = sampleAt(data, playhead)
+                val y = sH.process(sM.process(sL.process(x, low), mid), high)
+                v = y * channelVol * crossGain * masterGain
+                playhead += speed
+                if (playhead >= len - 1) { if (loop) playhead -= (len - 1) else { playhead = (len - 1).toDouble(); if (!scratching) playing = false } }
+                if (playhead < 0) { if (loop) playhead += (len - 1) else playhead = 0.0 }
             }
             v = v.coerceIn(-1f, 1f)
             out[i * 2] = v; out[i * 2 + 1] = v
         }
+        scratchVel = vel
     }
 
     private fun sampleAt(data: FloatArray, pos: Double): Float {

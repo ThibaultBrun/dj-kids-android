@@ -51,6 +51,7 @@ import fr.tbrun.djkids.ui.components.Pad
 import fr.tbrun.djkids.ui.components.Platter
 import fr.tbrun.djkids.ui.components.RoundButton
 import fr.tbrun.djkids.ui.components.VerticalFader
+import fr.tbrun.djkids.ui.theme.Amber
 import fr.tbrun.djkids.ui.theme.DeckAColor
 import fr.tbrun.djkids.ui.theme.DeckBColor
 import fr.tbrun.djkids.ui.theme.Lime
@@ -107,8 +108,10 @@ private fun DeckPanel(deck: Deck, deckId: DeckId, color: Color, onLoad: () -> Un
     val mid by deck.eqMid.collectAsStateWithLifecycle()
     val high by deck.eqHigh.collectAsStateWithLifecycle()
     val vol by deck.channelVolume.collectAsStateWithLifecycle()
+    val loaded by deck.loaded.collectAsStateWithLifecycle()
     val progress = if (dur > 0) pos.toFloat() / dur else 0f
     val isA = deckId == DeckId.A
+    val loading = title != null && !loaded
 
     Column(modifier = modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
         // Bandeau titre + temps (une ligne, tronqué).
@@ -117,7 +120,15 @@ private fun DeckPanel(deck: Deck, deckId: DeckId, color: Color, onLoad: () -> Un
             color = color, fontWeight = FontWeight.Bold, maxLines = 1,
             overflow = TextOverflow.Ellipsis, fontSize = 12.sp, modifier = Modifier.fillMaxWidth(),
         )
-        Text("${fmt(pos)} / ${fmt(dur)}", color = TextLo, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+        if (loading) {
+            Text("⏳ Chargement…", color = Amber, fontSize = 10.sp)
+            androidx.compose.material3.LinearProgressIndicator(
+                color = color,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+            )
+        } else {
+            Text("${fmt(pos)} / ${fmt(dur)}", color = TextLo, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+        }
         Spacer(Modifier.height(4.dp))
 
         // Zone centrale : jog + faders + EQ, prend toute la hauteur restante.

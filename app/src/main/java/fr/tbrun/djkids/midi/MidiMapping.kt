@@ -154,6 +154,8 @@ class MidiMapping(context: Context) {
             learnSilent("CC:$ch:4", Binding(ControlFunction.EQ_MID, d))
             learnSilent("CC:$ch:5", Binding(ControlFunction.EQ_HIGH, d))
             learnSilent("CC:$ch:10", Binding(ControlFunction.JOG, d))
+            // Contact du jog (doigt posé) = note 8 sur le canal de la platine.
+            learnSilent("N:$ch:8", Binding(ControlFunction.JOG_TOUCH, d))
             // Pads (notes 0..7 sur le canal de pads de la platine).
             val pc = padCh(d)
             for (p in 0 until 8) {

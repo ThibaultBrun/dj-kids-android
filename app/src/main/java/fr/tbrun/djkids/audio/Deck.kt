@@ -111,6 +111,9 @@ class Deck(
         engine.jogTick(if (delta >= 0f) 1 else -1)
     }
 
+    /** Contact du jog (doigt posé/retiré) : entre/sort du mode scratch instantanément. */
+    fun jogTouch(pressed: Boolean) { engine.setScratching(pressed) }
+
     fun setEqLow(v: Float)  { eqLow.value = v;  engine.setEqLow(v) }
     fun setEqMid(v: Float)  { eqMid.value = v;  engine.setEqMid(v) }
     fun setEqHigh(v: Float) { eqHigh.value = v; engine.setEqHigh(v) }

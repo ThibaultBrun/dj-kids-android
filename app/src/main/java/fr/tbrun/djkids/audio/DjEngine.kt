@@ -77,6 +77,7 @@ class DjEngine(context: Context, scope: CoroutineScope) {
                     ControlFunction.PAD -> if (d != null) {
                         if (action.pressed) deck(d).padPressed(action.pad)
                     }
+                    ControlFunction.JOG_TOUCH -> if (d != null) deck(d).jogTouch(action.pressed)
                     else -> {}
                 }
             }
