@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1A1A3E"/>
+      <stop offset="100%" stop-color="#0A0A18"/>
+    </radialGradient>
+    <radialGradient id="vinyl" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1E1E35"/>
+      <stop offset="100%" stop-color="#12121F"/>
+    </radialGradient>
+    <radialGradient id="label" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF6B8A"/>
+      <stop offset="100%" stop-color="#FF2D5A"/>
+    </radialGradient>
+    <filter id="glow-cyan">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-pink">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="500" fill="url(#bg)"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="250" x2="1024" y2="250" stroke="#1E1E40" stroke-width="1"/>
+  <line x1="512" y1="0" x2="512" y2="500" stroke="#1E1E40" stroke-width="1"/>
+
+  <!-- ===== VINYL RECORD (left center) ===== -->
+  <g transform="translate(280, 250)">
+    <!-- Outer vinyl -->
+    <circle cx="0" cy="0" r="195" fill="url(#vinyl)" stroke="#00E5FF" stroke-width="3"/>
+
+    <!-- Groove rings -->
+    <circle cx="0" cy="0" r="170" fill="none" stroke="#252545" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="148" fill="none" stroke="#252545" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="126" fill="none" stroke="#252545" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="104" fill="none" stroke="#252545" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="82" fill="none" stroke="#303055" stroke-width="1"/>
+
+    <!-- Vinyl label (center disk) -->
+    <circle cx="0" cy="0" r="68" fill="url(#label)"/>
+
+    <!-- Label text -->
+    <text x="0" y="-16" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="13" font-weight="900" fill="white" letter-spacing="3">DJ KIDS</text>
+    <line x1="-30" y1="-6" x2="30" y2="-6" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="rgba(255,255,255,0.7)" letter-spacing="2">SCRATCH EDITION</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="rgba(255,255,255,0.5)">33⅓ RPM</text>
+
+    <!-- Spindle hole -->
+    <circle cx="0" cy="0" r="7" fill="#0A0A18"/>
+
+    <!-- Tonearm -->
+    <line x1="155" y1="-160" x2="45" y2="-62" stroke="#00E5FF" stroke-width="4" stroke-linecap="round" filter="url(#glow-cyan)"/>
+    <!-- Pivot -->
+    <circle cx="155" cy="-160" r="12" fill="#00E5FF" filter="url(#glow-cyan)"/>
+    <circle cx="155" cy="-160" r="6" fill="#0A0A18"/>
+    <!-- Cartridge -->
+    <rect x="32" y="-72" width="22" height="12" rx="2" fill="#FF4D6D" transform="rotate(-34 43 -66)" filter="url(#glow-pink)"/>
+    <!-- Stylus needle -->
+    <line x1="40" y1="-59" x2="44" y2="-52" stroke="#FF4D6D" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- ===== RIGHT SIDE: Title + tagline ===== -->
+  <!-- App name -->
+  <text x="570" y="195" font-family="'Arial Black', 'Impact', sans-serif" font-size="82" font-weight="900" fill="white" letter-spacing="-2">DJ</text>
+  <text x="668" y="195" font-family="'Arial Black', 'Impact', sans-serif" font-size="82" font-weight="900" fill="#00E5FF" filter="url(#glow-cyan)" letter-spacing="-2">KIDS</text>
+
+  <!-- Tagline -->
+  <text x="572" y="240" font-family="Arial, sans-serif" font-size="22" fill="rgba(255,255,255,0.75)" letter-spacing="1">LEARN TO SCRATCH</text>
+
+  <!-- Divider -->
+  <line x1="572" y1="258" x2="940" y2="258" stroke="#FF4D6D" stroke-width="2" filter="url(#glow-pink)"/>
+
+  <!-- Feature bullets -->
+  <text x="575" y="295" font-family="Arial, sans-serif" font-size="17" fill="rgba(200,200,255,0.9)">▸  7 scratch techniques • 5 levels each</text>
+  <text x="575" y="323" font-family="Arial, sans-serif" font-size="17" fill="rgba(200,200,255,0.9)">▸  Rhythm trainer with visual cues</text>
+  <text x="575" y="351" font-family="Arial, sans-serif" font-size="17" fill="rgba(200,200,255,0.9)">▸  Real hardware — Hercules MK3</text>
+  <text x="575" y="379" font-family="Arial, sans-serif" font-size="17" fill="rgba(200,200,255,0.9)">▸  No internet required</text>
+
+  <!-- Small "by" credit -->
+  <text x="572" y="460" font-family="Arial, sans-serif" font-size="13" fill="rgba(255,255,255,0.3)" letter-spacing="1">tbrun.dev</text>
+
+  <!-- Decorative dots -->
+  <circle cx="950" cy="80" r="3" fill="#FF4D6D" opacity="0.6"/>
+  <circle cx="970" cy="100" r="2" fill="#00E5FF" opacity="0.5"/>
+  <circle cx="60" cy="430" r="4" fill="#00E5FF" opacity="0.4"/>
+  <circle cx="80" cy="460" r="2" fill="#FF4D6D" opacity="0.5"/>
+</svg>
