@@ -151,12 +151,19 @@ class ScratchDeckEngine(private val outRate: Int = 48000) {
         scratchVel = vel
     }
 
+    /** Interpolation cubique (Catmull-Rom, 4 points) : bien moins d'aliasing que le linéaire au scratch. */
     private fun sampleAt(data: FloatArray, pos: Double): Float {
+        val n = data.size
+        if (n == 0) return 0f
         val i = pos.toInt()
-        if (i < 0) return data[0]
-        if (i >= data.size - 1) return data[data.size - 1]
+        if (i < 1 || i >= n - 2) return data[i.coerceIn(0, n - 1)]
         val frac = (pos - i).toFloat()
-        return data[i] * (1 - frac) + data[i + 1] * frac
+        val p0 = data[i - 1]; val p1 = data[i]; val p2 = data[i + 1]; val p3 = data[i + 2]
+        val a = p1
+        val b = 0.5f * (p2 - p0)
+        val c = p0 - 2.5f * p1 + 2f * p2 - 0.5f * p3
+        val d = 0.5f * (p3 - p0) + 1.5f * (p1 - p2)
+        return ((d * frac + c) * frac + b) * frac + a
     }
 
     fun stop() {
