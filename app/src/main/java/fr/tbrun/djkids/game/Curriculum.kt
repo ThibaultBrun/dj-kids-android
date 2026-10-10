@@ -137,6 +137,16 @@ object Curriculum {
             levels = standardLevels(80),
             usesCut = true,
         ),
+        Technique(
+            id = "orbit",
+            name = "Orbit",
+            emoji = "🪐",
+            description = "Le sommet du scratch : deux clics de crossfader dans un seul mouvement, dans les deux sens.",
+            howTo = "Mouvement aller-retour continu + 2 clics de crossfader (début et milieu de chaque sens). " +
+                "Maîtrise le Flare avant d'attaquer ça.",
+            levels = standardLevels(82),
+            usesCut = true,
+        ),
     )
 
     fun technique(id: String): Technique? = techniques.firstOrNull { it.id == id }
