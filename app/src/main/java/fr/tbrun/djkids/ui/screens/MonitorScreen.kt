@@ -32,18 +32,19 @@ import fr.tbrun.djkids.ui.theme.TextLo
 @Composable
 fun MonitorScreen(vm: DjViewModel) {
     val log by vm.monitor.collectAsStateWithLifecycle()
+    val summary by vm.monitorSummary.collectAsStateWithLifecycle()
     val status by vm.midi.status.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
-    LaunchedEffect(log.size) {
-        if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
+    LaunchedEffect(summary.size) {
+        if (summary.isNotEmpty()) listState.animateScrollToItem(summary.size - 1)
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("MIDI Monitor", style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
         Text(
-            "Branche la MK3, presse chaque pad/jog/fader : le code s'affiche. Sert à vérifier le mapping.",
+            "Branche la MK3, bouge chaque contrôle UNE fois : il apparaît dans le résumé ci-dessous (1 ligne par contrôle, le jog ne noie plus le reste). Puis Exporter.",
             color = TextLo, fontSize = 12.sp,
         )
         Spacer(Modifier.height(8.dp))
@@ -53,13 +54,15 @@ fun MonitorScreen(vm: DjViewModel) {
             Button(onClick = { vm.connect() }) { Text("Connecter") }
             OutlinedButton(onClick = { vm.clearMonitor() }) { Text("Vider") }
             OutlinedButton(
-                enabled = log.isNotEmpty(),
+                enabled = summary.isNotEmpty(),
                 onClick = {
                     val report = buildString {
                         appendLine("DJ Kids — relevé MIDI MK3 (v$APP_VERSION)")
                         appendLine(status)
-                        appendLine("— ${log.size} messages —")
-                        log.forEach { appendLine(it) }
+                        appendLine("— ${summary.size} contrôles distincts —")
+                        summary.forEach {
+                            appendLine("${it.type} ch${it.channel} num=${it.number}  val ${it.minVal}..${it.maxVal} (x${it.count})")
+                        }
                     }
                     val send = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
@@ -71,10 +74,14 @@ fun MonitorScreen(vm: DjViewModel) {
             ) { Text("Exporter") }
         }
         Spacer(Modifier.height(8.dp))
+        Text("Résumé (${summary.size} contrôles) :", color = TextLo, fontSize = 12.sp)
         HorizontalDivider()
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(top = 8.dp)) {
-            items(log) { line ->
-                Text(line, fontFamily = FontFamily.Monospace, fontSize = 13.sp)
+            items(summary) { c ->
+                Text(
+                    "${c.type}  ch${c.channel}  num=${c.number}   ${c.minVal}..${c.maxVal}  (x${c.count})",
+                    fontFamily = FontFamily.Monospace, fontSize = 13.sp,
+                )
             }
         }
     }

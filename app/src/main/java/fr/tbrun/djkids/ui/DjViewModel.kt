@@ -32,6 +32,19 @@ data class LearnTarget(val fn: ControlFunction, val deck: DeckId?, val pad: Int 
 /** Gain appliqué au delta du jog MK3 pour obtenir une vitesse de scratch au ressenti naturel. */
 private const val SCRATCH_JOG_GAIN = 7.0
 
+/** Stat d'un contrôle MIDI distinct, pour relever le mapping (dédup, résiste au spam du jog). */
+data class ControlStat(
+    val key: String,
+    val type: String,
+    val channel: Int,
+    val number: Int,
+    val count: Int,
+    val firstVal: Int,
+    val lastVal: Int,
+    val minVal: Int,
+    val maxVal: Int,
+)
+
 class DjViewModel(app: Application) : AndroidViewModel(app) {
 
     val midi = MidiEngine(app)
@@ -61,6 +74,12 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
     private val _monitor = MutableStateFlow<List<String>>(emptyList())
     val monitor: StateFlow<List<String>> = _monitor
 
+    // Résumé par contrôle (dédup) : chaque bouton/fader/jog/pad listé une seule fois,
+    // même si le jog spamme. C'est ÇA qu'on exporte pour relever le mapping MK3.
+    private val controlStats = LinkedHashMap<String, ControlStat>()
+    private val _monitorSummary = MutableStateFlow<List<ControlStat>>(emptyList())
+    val monitorSummary: StateFlow<List<ControlStat>> = _monitorSummary
+
     private val _learn = MutableStateFlow<LearnTarget?>(null)
     val learn: StateFlow<LearnTarget?> = _learn
 
@@ -76,6 +95,7 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun onMidi(msg: MidiMessage) {
         _monitor.value = (_monitor.value + msg.pretty()).takeLast(300)
+        updateStat(msg)
 
         val target = _learn.value
         if (target != null) {
@@ -135,10 +155,23 @@ class DjViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    private fun updateStat(msg: MidiMessage) {
+        val key = msg.controlKey()
+        val v = if (msg.type == fr.tbrun.djkids.midi.MidiType.PITCH_BEND) msg.value14 else msg.data2
+        val prev = controlStats[key]
+        controlStats[key] = if (prev == null) {
+            ControlStat(key, msg.type.name, msg.channel, msg.data1, 1, v, v, v, v)
+        } else {
+            prev.copy(count = prev.count + 1, lastVal = v,
+                minVal = minOf(prev.minVal, v), maxVal = maxOf(prev.maxVal, v))
+        }
+        _monitorSummary.value = controlStats.values.toList()
+    }
+
     // --- MIDI ---
     fun connect() = midi.connect()
     fun disconnect() = midi.disconnect()
-    fun clearMonitor() { _monitor.value = emptyList() }
+    fun clearMonitor() { _monitor.value = emptyList(); controlStats.clear(); _monitorSummary.value = emptyList() }
 
     // --- Learn ---
     fun startLearn(fn: ControlFunction, deck: DeckId?, pad: Int = -1) {
