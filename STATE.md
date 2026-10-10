@@ -44,6 +44,7 @@ Donc : qualité production, mapping MK3 réel qui marche, branding, fiche store,
 11. [ ] Déclaration permissions (USB host, lecture audio/média), content rating, data safety (aucune donnée collectée)
 
 ## Dernier statut
+- 2026-10-10 10:22 : BUILD SUCCESSFUL 24s. Rien de neuf à coder — tout le chantier Play Store est bloqué sur action manuelle Thibault (Play Console + screenshots device). Code stable, 8 langues store prêtes, icône + feature graphic OK. Attente déblocage.
 - 2026-10-10 08:43 : Icône 512×512 Play Store créée (SVG vinyle+bras cyan+label rose → PNG Chromium). Commit 6aee44d pushé.
 - 2026-10-10 08:22 : Store listings **nl-NL** + **ja-JP** créés → 8 langues total. publish.py RELEASE_NOTES 8 langues. `docs/play-store-checklist.md` créé (content rating EVERYONE/3+, data safety no-data, screenshots roadmap, permissions). Commit 7cba012 pushé. BUILD SUCCESSFUL (build précédent 18s).
 - 2026-10-10 07:22 : Store listings **it-IT** + **pt-BR** créés (titre/court/long) + publish.py RELEASE_NOTES 6 langues. BUILD SUCCESSFUL 18s.
